@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2d3d50">
+  <link rel="manifest" href="manifest.json">
+  <title>Login - Barbería Foliano's</title>
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="icon" type="image/png" href="./assets/favicon.png">
+</head>
+<body>
+<div class="login-container">
+  <!-- Panel izquierdo: Formulario -->
+  <div class="login-card">
+    <div class="login-header">
+      <img src="./assets/logo.png" class="logo-icon" alt="Logo">
+      <h1>Barbería Foliano's</h1>
+      <p class="subtitle">Sistema de Administración</p>
+    </div>
+
+    <form id="loginForm" class="login-form">
+      <div class="form-group">
+        <label for="username">Usuario</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <input type="text" id="username" placeholder="Ingrese su usuario" required autocomplete="username">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <div class="input-wrapper">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <input type="password" id="password" placeholder="Ingrese su contraseña" required autocomplete="current-password">
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login">
+        Iniciar Sesión
+      </button>
+
+      <div id="errorMessage" class="error-message"></div>
+    </form>
+  </div>
+
+  <!-- Panel derecho: Imagen -->
+  <div class="login-image">
+    <div class="image-container">
+      <img src="./assets/barberia-image2.jpeg" alt="Barbería Foliano's">
+      <div class="image-overlay"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBoYWlsZJnirTMSiggkcugBNzWns1W3TTg",
+    authDomain: "barberia-folianosv1.firebaseapp.com",
+    projectId: "barberia-folianosv1",
+    storageBucket: "barberia-folianosv1.firebasestorage.app",
+    messagingSenderId: "601248328135",
+    appId: "1:601248328135:web:9bf521a49a73e1f45e51e2"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const errorMsg = document.getElementById("errorMessage");
+
+    try {
+      // Login real
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const uid = userCredential.user.uid;
+
+      // Traer perfil
+      const docRef = doc(db, "users", uid);
+      const snap = await getDoc(docRef);
+
+      if (!snap.exists()) {
+        errorMsg.textContent = "Usuario sin perfil configurado";
+        errorMsg.style.display = "block";
+        return;
+      }
+
+      const userData = snap.data();
+
+      // Guardar sesión
+      sessionStorage.setItem("currentUser", uid);
+      sessionStorage.setItem("userName", userData.name);
+      sessionStorage.setItem("sessionActive", "true");
+
+      window.location.href = "https://barberia-folianosv1.firebaseapp.com/app.html";
+
+    } catch (err) {
+      console.error(err);
+      errorMsg.textContent = "Usuario o contraseña incorrectos";
+      errorMsg.style.display = "block";
+    }
+  });
+</script>
+</body>
+</html>

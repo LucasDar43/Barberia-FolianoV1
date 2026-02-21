@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#667eea">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta name="description" content="Sistema de Administración para Barbería Foliano's">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Foliano's">
+    <link rel="manifest" href="manifest.json">
+    <title>Barbería Foliano's - Sistema de Administración</title>
+
+    <!-- GUARDIA DE SESIÓN -->
+    <style>
+        body { visibility: hidden; }
+    </style>
+
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/nuevas-secciones.css">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                <div class="logo-text">
+                    <h1>Foliano's</h1>
+                    <span class="user-name" id="currentUserName"></span>
+                </div>
+            </div>
+            
+            <nav class="nav">
+                <button class="nav-item active" data-page="dashboard">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    <span class="text">Dashboard</span>
+                </button>
+                <button class="nav-item" data-page="registro">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <span class="text">Nuevo Corte</span>
+                </button>
+                <button class="nav-item" data-page="deudores">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 8v4M12 16h.01"/>
+                    </svg>
+                    <span class="text">Deudores</span>
+                </button>
+
+                <button class="nav-item" data-page="bonos" id="bonosNav">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                        <line x1="1" y1="10" x2="23" y2="10"/>
+                    </svg>
+                    <span class="text">Bonos Mensuales</span>
+                </button>
+
+                <button class="nav-item" data-page="comisiones" id="comisionesNav">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                    <span class="text">Comisiones</span>
+                </button>
+
+                <button class="nav-item" data-page="solicitudes" id="solicitudesNav">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <span class="text">Solicitudes</span>
+                    <span class="badge" id="solicitudesBadge" style="display: none;">0</span>
+                </button>
+
+                <button class="nav-item" data-page="cierre" id="cierreNav">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                        <line x1="1" y1="10" x2="23" y2="10"/>
+                    </svg>
+                    <span class="text">Cierre de Caja</span>
+                </button>
+                <button class="nav-item" data-page="historial">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    <span class="text">Historial</span>
+                </button>
+
+                <button class="nav-item" data-page="configuracion">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6m0-6h6m-6 0H6"/>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span class="text">Configuración</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn" id="logoutBtn">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <button class="menu-toggle" id="menuToggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+                <h2 class="page-title" id="pageTitle">Dashboard</h2>
+                <div class="header-actions">
+                    <span class="date" id="currentDate"></span>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- Dashboard Page -->
+                <div class="page active" id="dashboard-page">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"/>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                            </svg>
+                            <div class="stat-info">
+                                <h3>Total Hoy</h3>
+                                <p class="stat-value" id="totalHoy">$0</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                            <div class="stat-info">
+                                <h3>Total Mes</h3>
+                                <p class="stat-value" id="totalMes">$0</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            <div class="stat-info">
+                                <h3>Cortes Hoy</h3>
+                                <p class="stat-value" id="cortesHoy">0</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card">
+                            <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                            </svg>
+                            <div class="stat-info">
+                                <h3>Cortes Mes</h3>
+                                <p class="stat-value" id="cortesMes">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <h3 class="card-title">Rendimiento por Peluquero - Hoy</h3>
+                            <div class="peluquero-stats">
+                                <div class="peluquero-item">
+                                    <div class="peluquero-header">
+                                        <span class="peluquero-name">
+                                            <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                                <circle cx="12" cy="7" r="4"/>
+                                            </svg>
+                                            Franco
+                                        </span>
+                                        <span class="peluquero-total" id="totalFrancoHoy">$0</span>
+                                    </div>
+                                    <div class="peluquero-details">
+                                        <span>Cortes: <strong id="cortesFrancoHoy">0</strong></span>
+                                        <span>Promedio: <strong id="promedioFrancoHoy">$0</strong></span>
+                                    </div>
+                                </div>
+
+                                <div class="peluquero-item">
+                                    <div class="peluquero-header">
+                                        <span class="peluquero-name">
+                                            <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                                <circle cx="12" cy="7" r="4"/>
+                                            </svg>
+                                            Nacho
+                                        </span>
+                                        <span class="peluquero-total" id="totalNachoHoy">$0</span>
+                                    </div>
+                                    <div class="peluquero-details">
+                                        <span>Cortes: <strong id="cortesNachoHoy">0</strong></span>
+                                        <span>Promedio: <strong id="promedioNachoHoy">$0</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3 class="card-title">Métodos de Pago - Hoy</h3>
+                            <div class="payment-stats">
+                                <div class="payment-item">
+                                    <span class="payment-label">
+                                        <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="12" y1="1" x2="12" y2="23"/>
+                                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                        </svg>
+                                        Efectivo
+                                    </span>
+                                    <span class="payment-value" id="efectivoHoy">$0</span>
+                                </div>
+                                <div class="payment-item">
+                                    <span class="payment-label">
+                                        <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                            <line x1="1" y1="10" x2="23" y2="10"/>
+                                        </svg>
+                                        Transferencia
+                                    </span>
+                                    <span class="payment-value" id="transferenciaHoy">$0</span>
+                                </div>
+                                <div class="payment-item">
+                                    <span class="payment-label">
+                                        <svg class="inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/>
+                                            <path d="M12 18V6"/>
+                                        </svg>
+                                        Mixto
+                                    </span>
+                                    <span class="payment-value" id="mixtoHoy">$0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">Últimos Cortes Registrados</h3>
+                        <div class="recent-cuts" id="recentCuts">
+                            <p class="empty-state">No hay cortes registrados aún</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registro Page -->
+                <div class="page" id="registro-page">
+                    <div class="form-container">
+                        <div class="card">
+                            <h3 class="card-title">Registrar Nuevo Corte</h3>
+                            <form id="corteForm" class="corte-form">
+                                <div class="form-group">
+                                    <label for="peluquero">Peluquero *</label>
+                                    <select id="peluquero" required>
+                                        <option value="">Seleccione un peluquero</option>
+                                        <option value="franco">Franco</option>
+                                        <option value="nacho">Nacho</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="tipoCorte">Tipo de Corte *</label>
+                                    <select id="tipoCorte" required>
+                                        <option value="">Seleccione el tipo</option>
+                                        <option value="solo-corte">Solo Corte</option>
+                                        <option value="corte-barba">Corte y Barba</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Método de Pago *</label>
+                                    <div class="radio-group">
+                                        <label class="radio-label">
+                                            <input type="radio" name="metodoPago" value="efectivo" required>
+                                            <span>Efectivo</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="metodoPago" value="transferencia" required>
+                                            <span>Transferencia</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="metodoPago" value="mixto" required>
+                                            <span>Mixto</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Campos para pago mixto -->
+                                <div id="pagoMixtoFields" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="montoEfectivo">Monto en Efectivo</label>
+                                        <input type="number" id="montoEfectivo" placeholder="$0.00" min="0" step="0.01">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="montoTransferencia">Monto en Transferencia</label>
+                                        <input type="number" id="montoTransferencia" placeholder="$0.00" min="0" step="0.01">
+                                    </div>
+                                </div>
+
+                                <div class="form-group" id="montoSimpleField">
+                                    <label for="monto">Monto Total *</label>
+                                    <input type="number" id="monto" placeholder="$0.00" min="0" step="0.01" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="cliente">Cliente (Opcional)</label>
+                                    <input type="text" id="cliente" placeholder="Nombre del cliente">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="esDeuda">
+                                        <span>Registrar como deuda (el cliente debe dinero)</span>
+                                    </label>
+                                </div>
+
+                                <div id="deudaFields" style="display: none;">
+                                    <div class="form-group">
+                                        <label for="montoPagado">Monto Pagado (opcional)</label>
+                                        <input type="number" id="montoPagado" placeholder="$0.00" min="0" step="0.01">
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn-submit">
+                                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 6L9 17l-5-5"/>
+                                    </svg>
+                                    <span>Registrar Corte</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deudores Page -->
+                <div class="page" id="deudores-page">
+                    <div class="card">
+                        <div class="card-header-with-actions">
+                            <h3 class="card-title">Gestión de Deudores</h3>
+                            <div class="deuda-summary">
+                                <span class="deuda-total">
+                                    Total Adeudado: <strong id="totalAdeudado">$0</strong>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Fecha</th>
+                                        <th>Peluquero</th>
+                                        <th>Servicio</th>
+                                        <th>Total</th>
+                                        <th>Pagado</th>
+                                        <th>Debe</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="deudoresTable">
+                                    <tr>
+                                        <td colspan="8" class="empty-state">No hay deudas registradas</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bonos Page -->
+                <div class="page" id="bonos-page">
+                    <div class="bonos-container">
+
+                        <!-- Botón para crear nuevo bono -->
+
+                        <div class="bonos-header">
+                            <div class="search-container">
+                                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"/>
+                                    <path d="m21 21-4.35-4.35"/>
+                                </svg>
+                                <input
+                                        type="text"
+                                        id="buscarBono"
+                                        class="search-input"
+                                        placeholder="Buscar cliente..."
+                                        autocomplete="off"
+                                >
+                            </div>
+                            <button class="btn-nuevo-bono" onclick="app.abrirModalNuevoBono()">
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                <span>Nuevo Bono Mensual</span>
+                            </button>
+                        </div>
+
+                        <!-- Bonos Activos -->
+                        <div class="card">
+                            <h3 class="card-title">📋 Bonos Activos</h3>
+                            <div id="bonosActivosContainer">
+                                <div class="empty-state">
+                                    <p>Cargando...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Historial de Bonos -->
+                        <div class="card" style="margin-top: 24px;">
+                            <h3 class="card-title">📊 Historial de Bonos Completados</h3>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Compra</th>
+                                        <th>Vencimiento</th>
+                                        <th>Cortes</th>
+                                        <th>Monto</th>
+                                        <th>Peluquero</th>
+                                        <th>Vendido por</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="historialBonosTable">
+                                    <tr>
+                                        <td colspan="7" class="empty-state">No hay bonos completados</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Historial Page -->
+                <div class="page" id="historial-page">
+                    <div class="card">
+                        <div class="card-header-with-actions">
+                            <h3 class="card-title">Historial de Cortes</h3>
+                            <div class="filters">
+                                <select id="filtroFecha" class="filter-select">
+                                    <option value="hoy">Hoy</option>
+                                    <option value="semana">Esta Semana</option>
+                                    <option value="mes">Este Mes</option>
+                                    <option value="todos">Todos</option>
+                                </select>
+                                <select id="filtroPeluquero" class="filter-select">
+                                    <option value="todos">Todos los Peluqueros</option>
+                                    <option value="franco">Franco</option>
+                                    <option value="nacho">Nacho</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Hora</th>
+                                        <th>Peluquero</th>
+                                        <th>Tipo</th>
+                                        <th>Cliente</th>
+                                        <th>Pago</th>
+                                        <th>Monto</th>
+                                        <th>Registrado por</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historialTable">
+                                    <tr>
+                                        <td colspan="9" class="empty-state">No hay registros</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Cierre de Caja Page -->
+                <div class="page" id="cierre-page">
+                    <div class="cierre-container">
+
+                        <!-- ESTADO ACTUAL DE CAJA -->
+                        <div class="card" style="margin-bottom: 20px;">
+                            <h3 class="card-title">Estado Actual de Caja</h3>
+                            <div class="cierre-info">
+                                <div class="cierre-row">
+                                    <span class="cierre-label">Saldo inicial del dia:</span>
+                                    <span class="cierre-value" id="cierreSaldoInicial">$0</span>
+                                </div>
+                                <div class="cierre-row">
+                                    <span class="cierre-label">Efectivo recaudado hoy:</span>
+                                    <span class="cierre-value" id="cierreEfectivoRegistrado">$0</span>
+                                </div>
+                                <div class="cierre-row">
+                                    <span class="cierre-label">Transferencias hoy:</span>
+                                    <span class="cierre-value" id="cierreTransferenciaRegistrada">$0</span>
+                                </div>
+                                <div class="cierre-row">
+                                    <span class="cierre-label">Retiros del dia:</span>
+                                    <span class="cierre-value" style="color:#ef4444;" id="cierreRetirosHoy">$0</span>
+                                </div>
+                                <div class="cierre-row cierre-total">
+                                    <span class="cierre-label"><strong>Efectivo esperado en caja:</strong></span>
+                                    <span class="cierre-value-total" id="cierreTotalEsperado">$0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ACCIONES -->
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px;">
+
+                            <!-- Apertura -->
+                            <div class="card" style="text-align:center;">
+                                <div style="margin-bottom:8px;">
+                                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2d3d50" stroke-width="1.8">
+                                        <circle cx="12" cy="12" r="4"/>
+                                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                                    </svg>
+                                </div>
+                                <h4 style="margin:0 0 8px; color:#2d3d50;">Apertura del Dia</h4>
+                                <p style="color:#67676d; font-size:13px; margin-bottom:16px;" id="estadoApertura">Sin registrar hoy</p>
+                                <button class="btn-primary" onclick="app.abrirModalApertura()" id="btnApertura">
+                                    Registrar Apertura
+                                </button>
+                            </div>
+
+                            <!-- Retiro -->
+                            <div class="card" style="text-align:center;">
+                                <div style="margin-bottom:8px;">
+                                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.8">
+                                        <rect x="2" y="6" width="20" height="12" rx="2"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                        <path d="M6 12h.01M18 12h.01"/>
+                                    </svg>
+                                </div>
+                                <h4 style="margin:0 0 8px; color:#2d3d50;">Retirar Dinero</h4>
+                                <p style="color:#67676d; font-size:13px; margin-bottom:16px;">Registrar un retiro de caja</p>
+                                <button class="btn-secondary" onclick="app.abrirModalRetiro()">
+                                    Registrar Retiro
+                                </button>
+                            </div>
+
+                            <!-- Cierre -->
+                            <div class="card" style="text-align:center;">
+                                <div style="margin-bottom:8px;">
+                                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#2d3d50" stroke-width="1.8">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    </svg>
+                                </div>
+                                <h4 style="margin:0 0 8px; color:#2d3d50;">Cierre del Dia</h4>
+                                <p style="color:#67676d; font-size:13px; margin-bottom:16px;">Cerrar y cuadrar la caja</p>
+                                <button class="btn-submit" style="width:100%;" onclick="app.abrirModalCierre()">
+                                    Cerrar Caja
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <!-- HISTORIAL -->
+                        <div class="card">
+                            <h3 class="card-title">Historial de Caja</h3>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Monto</th>
+                                        <th>Detalle</th>
+                                        <th>Por</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="historialCierresTable">
+                                    <tr>
+                                        <td colspan="5" class="empty-state">No hay registros</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Configuración Page -->
+                <div class="page" id="configuracion-page">
+                    <div class="form-container" style="max-width: 700px;">
+                        <div class="card">
+                            <h3 class="card-title">Configuración de Precios</h3>
+                            <p style="color: var(--gray); margin-bottom: 25px;">
+                                Configura los precios predeterminados para cada tipo de servicio. Estos valores se aplicarán automáticamente al registrar un corte.
+                            </p>
+                            
+                            <form id="configForm" class="corte-form">
+                                <div class="precio-config-grid">
+                                    <div class="precio-card">
+                                        <div class="precio-card-header">
+                                            <svg class="precio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20 6L9 17l-5-5"/>
+                                            </svg>
+                                            <h4>Solo Corte</h4>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="precioSoloCorte">Precio (ARS)</label>
+                                            <input type="number" id="precioSoloCorte" placeholder="9000" min="0" step="100" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="precio-card">
+                                        <div class="precio-card-header">
+                                            <svg class="precio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M20 6L9 17l-5-5"/>
+                                            </svg>
+                                            <h4>Corte y Barba</h4>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="precioCorteBarba">Precio (ARS)</label>
+                                            <input type="number" id="precioCorteBarba" placeholder="12000" min="0" step="100" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group" style="margin-top: 20px;">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="usarPreciosFijos">
+                                        <span>Usar precios fijos automáticamente (no preguntar el monto al registrar)</span>
+                                    </label>
+                                </div>
+
+                                <button type="submit" class="btn-submit">
+                                    <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                        <polyline points="17 21 17 13 7 13 7 21"/>
+                                        <polyline points="7 3 7 8 15 8"/>
+                                    </svg>
+                                    <span>Guardar Configuración</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="card" style="margin-top: 20px;">
+                            <h3 class="card-title">Vista Previa de Precios</h3>
+                            <div class="precios-preview">
+                                <div class="preview-item">
+                                    <span class="preview-label">Solo Corte:</span>
+                                    <span class="preview-value" id="previewSoloCorte">$9,000</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span class="preview-label">Corte y Barba:</span>
+                                    <span class="preview-value" id="previewCorteBarba">$12,000</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span class="preview-label">Modo:</span>
+                                    <span class="preview-value" id="previewModo">Manual</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="page" id="comisiones-page">
+                    <div class="comisiones-container">
+
+                        <!-- PAGO DE NACHO -->
+                        <div class="card comision-card-nacho" style="margin-bottom: 24px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                                <div>
+                                    <h3>Pago de Nacho (60%)</h3>
+                                    <p style="opacity: 0.9; margin-top: 8px;">Nacho recibe el 60% del total de sus cortes</p>
+                                </div>
+                                <button class="btn-registrar-pago-nacho" onclick="app.abrirModalPagoNacho()">
+                                    Registrar Pago
+                                </button>
+                            </div>
+
+                            <div class="comision-grid" style="margin-top: 20px;">
+                                <div class="comision-item">
+                                    <span class="label">Cortes realizados:</span>
+                                    <span class="value" id="cortesNachoSemana">0</span>
+                                </div>
+                                <div class="comision-item">
+                                    <span class="label">Total generado:</span>
+                                    <span class="value" id="totalNachoSemana">$0</span>
+                                </div>
+                                <div class="comision-item highlight">
+                                    <span class="label">Comision a pagar (60%):</span>
+                                    <span class="value-big" id="comisionNachoSemana">$0</span>
+                                </div>
+                            </div>
+
+                            <!-- Historial de pagos a Nacho -->
+                            <div style="margin-top: 24px;">
+                                <button class="btn-toggle-historial" onclick="app.toggleHistorialPagosNacho()" id="btnToggleHistorialNacho">
+                                    Ver historial de pagos
+                                </button>
+                                <div id="historialPagosNachoContainer" style="display:none; margin-top:16px;">
+                                    <div id="historialPagosNachoLista"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- GANANCIAS FRANCO -->
+                        <div class="card comision-card-franco" style="margin-bottom: 24px;">
+                            <h3>Ganancias de Franco</h3>
+                            <p style="opacity: 0.9; margin-top: 8px;">Tus cortes + 40% de los cortes de Nacho</p>
+
+                            <div class="comision-grid" style="margin-top: 20px;">
+                                <div class="comision-item">
+                                    <span class="label">Tus cortes:</span>
+                                    <span class="value" id="cortesFrancoSemana">0</span>
+                                </div>
+                                <div class="comision-item">
+                                    <span class="label">Total de tus cortes:</span>
+                                    <span class="value" id="totalFrancoSemana">$0</span>
+                                </div>
+                                <div class="comision-item">
+                                    <span class="label">Tu comision de Nacho (40%):</span>
+                                    <span class="value" id="comisionFrancoSemana">$0</span>
+                                </div>
+                                <div class="comision-item highlight">
+                                    <span class="label">Tu Ganancia Total:</span>
+                                    <span class="value-big success" id="gananciaFrancoSemana">$0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- DESGLOSE POR SEMANA -->
+                        <div class="card" style="margin-bottom: 24px;">
+                            <h3 class="card-title">Desglose por Semana</h3>
+                            <div id="desgloseSemanasContainer">
+                                <div class="empty-state">Cargando...</div>
+                            </div>
+                        </div>
+
+                        <!-- INFO -->
+                        <div class="alert alert-info">
+                            <strong>Como funcionan las comisiones:</strong>
+                            <p style="margin: 8px 0 0; line-height: 1.6;">
+                                Nacho recibe el <strong>60%</strong> del total de sus cortes.
+                                Franco recibe el <strong>40%</strong> restante de los cortes de Nacho,
+                                mas el <strong>100%</strong> de sus propios cortes.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="page" id="solicitudes-page">
+                    <div class="solicitudes-container">
+
+                        <!-- Solicitudes Pendientes -->
+                        <div class="card">
+                            <h3 class="card-title">Solicitudes Pendientes</h3>
+                            <div id="solicitudesPendientesContainer">
+                                <div class="empty-state">
+                                    <p>Cargando...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Historial de Solicitudes -->
+                        <div class="card" style="margin-top: 24px;">
+                            <h3 class="card-title">Historial de Solicitudes</h3>
+                            <div id="historialSolicitudesContainer">
+                                <p class="empty-state">No hay historial</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal para pagar deuda -->
+    <div class="modal" id="pagarDeudaModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Pagar Deuda</h3>
+                <button class="modal-close" onclick="app.cerrarModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Cliente: <strong id="modalClienteNombre"></strong></p>
+                <p>Debe: <strong id="modalMontoDebe"></strong></p>
+                <div class="form-group">
+                    <label for="montoPago">Monto a Pagar</label>
+                    <input type="number" id="montoPago" placeholder="$0.00" min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Método de Pago</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="metodoPagoDeuda" value="efectivo" checked>
+                            <span>Efectivo</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="metodoPagoDeuda" value="transferencia">
+                            <span>Transferencia</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="app.cerrarModal()">Cancelar</button>
+                <button class="btn-primary" onclick="app.procesarPagoDeuda()">Registrar Pago</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Nuevo Turno -->
+    <div class="modal" id="nuevoTurnoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nuevo Turno</h3>
+                <button class="modal-close" onclick="app.cerrarModalTurno()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="turnoForm">
+                    <div class="form-group">
+                        <label for="turnoHora">Hora *</label>
+                        <input type="time" id="turnoHora" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="turnoCliente">Cliente *</label>
+                        <input type="text" id="turnoCliente" placeholder="Nombre del cliente" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="turnoPeluquero">Peluquero *</label>
+                        <select id="turnoPeluquero" required>
+                            <option value="">Seleccione...</option>
+                            <option value="franco">Franco</option>
+                            <option value="nacho">Nacho</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="turnoServicio">Servicio</label>
+                        <select id="turnoServicio">
+                            <option value="solo-corte">Solo Corte</option>
+                            <option value="corte-barba">Corte y Barba</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="turnoNotas">Notas (Opcional)</label>
+                        <textarea id="turnoNotas" rows="2" placeholder="Notas adicionales"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="app.cerrarModalTurno()">Cancelar</button>
+                <button class="btn-primary" onclick="app.guardarTurno()">Guardar Turno</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Nuevo Gasto -->
+    <div class="modal" id="nuevoGastoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Registrar Gasto</h3>
+                <button class="modal-close" onclick="app.cerrarModalGasto()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="gastoForm">
+                    <div class="form-group">
+                        <label for="gastoCategoria">Categoría *</label>
+                        <select id="gastoCategoria" required>
+                            <option value="">Seleccione...</option>
+                            <option value="productos">Productos (shampoo, gel, etc.)</option>
+                            <option value="servicios">Servicios (luz, agua, internet)</option>
+                            <option value="alquiler">Alquiler</option>
+                            <option value="mantenimiento">Mantenimiento</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gastoDescripcion">Descripción *</label>
+                        <input type="text" id="gastoDescripcion" placeholder="Ej: Compra de shampoo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gastoMonto">Monto *</label>
+                        <input type="number" id="gastoMonto" placeholder="$0.00" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gastoFecha">Fecha *</label>
+                        <input type="date" id="gastoFecha" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="app.cerrarModalGasto()">Cancelar</button>
+                <button class="btn-primary" onclick="app.guardarGasto()">Registrar Gasto</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modal para Nuevo Bono -->
+    <div class="modal" id="nuevoBonoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💳 Nuevo Bono Mensual</h3>
+                <button class="modal-close" onclick="app.cerrarModalNuevoBono()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info" style="margin-bottom: 20px;">
+                    <strong>ℹ️ Bono Mensual:</strong> 4 cortes para usar en 35 días con descuento especial.
+                </div>
+
+                <form id="nuevoBonoForm">
+                    <div class="form-group">
+                        <label for="bonoCliente">Cliente *</label>
+                        <input type="text" id="bonoCliente" placeholder="Nombre del cliente" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bonoPeluquero">Peluquero *</label>
+                        <select id="bonoPeluquero" required>
+                            <option value="">Seleccione...</option>
+                            <option value="franco">Franco</option>
+                            <option value="nacho">Nacho</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bonoMonto">Monto a Cobrar *</label>
+                        <input type="number" id="bonoMonto" placeholder="$0.00" min="0" step="1000" required>
+                        <small id="bonoMontoSugerido" style="color: var(--gray); display: block; margin-top: 5px;"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bonoVencimiento">Fecha de Vencimiento *</label>
+                        <input type="date" id="bonoVencimiento" required>
+                        <small style="color: var(--gray);">Por defecto: 35 días desde hoy</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Método de Pago *</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="metodoPagoBono" value="efectivo" checked>
+                                <span>Efectivo</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="metodoPagoBono" value="transferencia">
+                                <span>Transferencia</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="app.cerrarModalNuevoBono()">Cancelar</button>
+                <button class="btn-primary" onclick="app.guardarNuevoBono()">Crear Bono</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+    <!-- ========================================== -->
+    <!-- MODAL: Solicitud Eliminar Corte (Nacho)   -->
+    <!-- ========================================== -->
+    <div class="modal" id="solicitudEliminarModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🗑️ Solicitar Eliminación de Corte</h3>
+                <button class="close-btn" onclick="app.cerrarSolicitudEliminarModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <strong>⚠️ Importante:</strong> Esta acción requiere aprobación de Franco.
+                    Debes explicar claramente por qué necesitas eliminar este corte.
+                </div>
+                <div class="form-group">
+                    <label for="motivoEliminacion">Motivo de la eliminación *</label>
+                    <textarea
+                            id="motivoEliminacion"
+                            rows="4"
+                            placeholder="Ej: El cliente canceló y ya le devolví el dinero..."
+                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"
+                    ></textarea>
+                    <small style="color: var(--gray);">Mínimo 10 caracteres</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="app.cerrarSolicitudEliminarModal()">Cancelar</button>
+                <button class="btn-primary" onclick="app.enviarSolicitudEliminar()">Enviar Solicitud</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL: Solicitud Cobrar Deuda (Nacho)     -->
+    <!-- ========================================== -->
+    <div class="modal" id="solicitudCobroModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>💰 Solicitar Cobro de Deuda</h3>
+                <button class="close-btn" onclick="app.cerrarSolicitudCobroModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>ℹ️ Información:</strong> Esta acción requiere aprobación de Franco.
+                </div>
+                <div class="deuda-info">
+                    <p><strong>Cliente:</strong> <span id="solicitudClienteNombre"></span></p>
+                    <p><strong>Monto adeudado:</strong> <span id="solicitudMontoDebe"></span></p>
+                </div>
+                <div class="form-group">
+                    <label for="montoCobrarSolicitud">Monto a cobrar</label>
+                    <input type="number" id="montoCobrarSolicitud" class="form-control" min="0" step="1000">
+                </div>
+                <div class="form-group">
+                    <label>Método de pago</label>
+                    <div class="radio-group" style="margin-top: 8px;">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="radio" name="metodoPagoSolicitud" value="efectivo" checked>
+                            Efectivo
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="radio" name="metodoPagoSolicitud" value="transferencia">
+                            Transferencia
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="motivoCobro">Motivo / Observaciones *</label>
+                    <textarea
+                            id="motivoCobro"
+                            rows="3"
+                            placeholder="Ej: El cliente vino hoy y pagó en efectivo..."
+                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"
+                    ></textarea>
+                    <small style="color: var(--gray);">Mínimo 10 caracteres</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="app.cerrarSolicitudCobroModal()">Cancelar</button>
+                <button class="btn-primary" onclick="app.enviarSolicitudCobro()">Enviar Solicitud</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODAL: Responder Solicitud (Franco)       -->
+    <!-- ========================================== -->
+    <div class="modal" id="responderSolicitudModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="tituloAccion">Responder Solicitud</h3>
+                <button class="close-btn" onclick="app.cerrarModalRespuesta()">×</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="accionSolicitud">
+                <div class="form-group">
+                    <label for="notaRespuesta">Nota / Comentario</label>
+                    <textarea
+                            id="notaRespuesta"
+                            rows="3"
+                            placeholder="Agrega un comentario sobre tu decisión..."
+                            style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;"
+                    ></textarea>
+                    <small style="color: var(--gray);">Mínimo 5 caracteres</small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="app.cerrarModalRespuesta()">Cancelar</button>
+                <button class="btn-primary" onclick="app.responderSolicitud()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pago Nacho -->
+    <div id="modalPagoNacho" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:white; border-radius:16px; padding:32px; max-width:400px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <h3 style="margin:0 0 8px; color:#2d3d50;">Registrar Pago a Nacho</h3>
+            <p style="color:#67676d; margin:0 0 20px; font-size:14px;">Este pago quedara guardado en el historial</p>
+
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-weight:600; margin-bottom:6px; color:#2d3d50;">Monto a pagar</label>
+                <input type="number" id="inputMontoNacho" placeholder="Ej: 45000"
+                       style="width:100%; padding:12px; border:2px solid #4a5f80; border-radius:8px; font-size:16px; box-sizing:border-box;">
+            </div>
+
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-weight:600; margin-bottom:6px; color:#2d3d50;">Nota (opcional)</label>
+                <input type="text" id="inputNotaNacho" placeholder="Ej: Pago semana 3 febrero"
+                       style="width:100%; padding:12px; border:2px solid #4a5f80; border-radius:8px; font-size:14px; box-sizing:border-box;">
+            </div>
+
+            <div style="display:flex; gap:12px;">
+                <button onclick="app.cerrarModalPagoNacho()"
+                        style="flex:1; padding:12px; border:2px solid #e5e7eb; background:white; border-radius:8px; font-weight:600; cursor:pointer; color:#67676d;">
+                    Cancelar
+                </button>
+                <button onclick="app.guardarPagoNacho()"
+                        style="flex:1; padding:12px; background:#2d3d50; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">
+                    Guardar Pago
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Apertura de Caja -->
+    <div id="modalApertura" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:white; border-radius:16px; padding:32px; max-width:400px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <h3 style="margin:0 0 8px; color:#2d3d50;">Apertura del Dia</h3>
+            <p style="color:#67676d; margin:0 0 20px; font-size:14px;">Cuanta plata hay en caja al iniciar el dia</p>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-weight:600; margin-bottom:6px; color:#2d3d50;">Saldo inicial en caja</label>
+                <input type="number" id="inputSaldoApertura" placeholder="Ej: 20000"
+                       style="width:100%; padding:12px; border:2px solid #4a5f80; border-radius:8px; font-size:16px; box-sizing:border-box;">
+            </div>
+            <div style="display:flex; gap:12px;">
+                <button onclick="app.cerrarModalApertura()"
+                        style="flex:1; padding:12px; border:2px solid #e5e7eb; background:white; border-radius:8px; font-weight:600; cursor:pointer; color:#67676d;">
+                    Cancelar
+                </button>
+                <button onclick="app.guardarApertura()"
+                        style="flex:1; padding:12px; background:#2d3d50; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">
+                    Confirmar Apertura
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Retiro de Caja -->
+    <div id="modalRetiro" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:white; border-radius:16px; padding:32px; max-width:400px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <h3 style="margin:0 0 8px; color:#2d3d50;">Registrar Retiro</h3>
+            <p style="color:#67676d; margin:0 0 20px; font-size:14px;">Este monto se descontara del saldo de caja</p>
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-weight:600; margin-bottom:6px; color:#2d3d50;">Monto a retirar</label>
+                <input type="number" id="inputMontoRetiro" placeholder="Ej: 50000"
+                       style="width:100%; padding:12px; border:2px solid #4a5f80; border-radius:8px; font-size:16px; box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-weight:600; margin-bottom:6px; color:#2d3d50;">Motivo (opcional)</label>
+                <input type="text" id="inputMotivoRetiro" placeholder="Ej: Retiro semanal"
+                       style="width:100%; padding:12px; border:2px solid #4a5f80; border-radius:8px; font-size:14px; box-sizing:border-box;">
+            </div>
+            <div style="display:flex; gap:12px;">
+                <button onclick="app.cerrarModalRetiro()"
+                        style="flex:1; padding:12px; border:2px solid #e5e7eb; background:white; border-radius:8px; font-weight:600; cursor:pointer; color:#67676d;">
+                    Cancelar
+                </button>
+                <button onclick="app.guardarRetiro()"
+                        style="flex:1; padding:12px; background:#ef4444; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">
+                    Confirmar Retiro
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cierre de Caja -->
+    <div id="modalCierre" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+        <div style="background:white; border-radius:16px; padding:32px; max-width:420px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+            <h3 style="margin:0 0 8px; color:#2d3d50;">Cierre de Caja</h3>
+            <p style="color:#67676d; margin:0 0 16px; font-size:14px;">Conta el efectivo fisico y confirma el cierre</p>
+
+            <div style="background:#f8f9fa; border-radius:10px; padding:16px; margin-bottom:16px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                    <span style="color:#67676d; font-size:14px;">Efectivo esperado en caja:</span>
+                    <span style="font-weight:700; color:#2d3d50;" id="modalCierreTotalEsperado">$0</span>
+                </div>
+            </div>
+
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-weight:600; margin-bottom:6px; color:#2d3d50;">Efectivo fisico contado</label>
+                <input type="number" id="inputEfectivoCierre" placeholder="Ej: 110000"
+                       oninput="app.calcularDiferenciaCierre()"
+                       style="width:100%; padding:12px; border:2px solid #4a5f80; border-radius:8px; font-size:16px; box-sizing:border-box;">
+            </div>
+
+            <div id="cierreDiferencia" style="display:none; padding:12px; border-radius:8px; margin-bottom:16px; font-weight:600; text-align:center;"></div>
+
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-weight:600; margin-bottom:6px; color:#2d3d50;">Notas (opcional)</label>
+                <textarea id="notasCierre" rows="2" placeholder="Ej: Faltaron $1000 - revisar manana"
+                          style="width:100%; padding:12px; border:2px solid #4a5f80; border-radius:8px; font-size:14px; box-sizing:border-box; resize:none;"></textarea>
+            </div>
+
+            <div style="display:flex; gap:12px;">
+                <button onclick="app.cerrarModalCierre()"
+                        style="flex:1; padding:12px; border:2px solid #e5e7eb; background:white; border-radius:8px; font-weight:600; cursor:pointer; color:#67676d;">
+                    Cancelar
+                </button>
+                <button onclick="app.confirmarCierre()"
+                        style="flex:1; padding:12px; background:#2d3d50; color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">
+                    Confirmar Cierre
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/app.js?v=1"></script>
+    <script type="module" src="js/extensiones.js"></script>
+
+
+    <script>
+        // Registrar Service Worker para PWA (solo en HTTPS)
+        if ('serviceWorker' in navigator && window.location.protocol === 'https:') {
+            navigator.serviceWorker.register('/sw.js')
+                .then(() => console.log('\u2705 Service Worker registrado'))
+                .catch((err) => console.log('\u274c Error SW:', err));
+        }
+    </script>
+
+
+</body>
+</html>

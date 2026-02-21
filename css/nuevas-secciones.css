@@ -1,0 +1,837 @@
+/* ============================================ */
+/* ESTILOS PARA NUEVAS SECCIONES */
+/* SIN GRADIENTES - Colores sólidos */
+/* Azul oscuro predominante */
+/* ============================================ */
+
+/* Turnos */
+.turnos-container {
+    max-width: 1200px;
+}
+
+.btn-nuevo-turno {
+    background: #ff9a7a;  /* Color sólido naranja */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-nuevo-turno:hover {
+    transform: translateY(-2px);
+    background: #ff8461;
+    box-shadow: 0 4px 12px rgba(255, 154, 122, 0.4);
+}
+
+.fecha-selector {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+    justify-content: center;
+}
+
+.btn-fecha {
+    background: #2d3d50;  /* Azul oscuro sólido */
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+}
+
+.btn-fecha:hover {
+    background: #1a2332;  /* Azul más oscuro */
+}
+
+.input-fecha {
+    padding: 10px 15px;
+    border: 2px solid #4a5f80;
+    border-radius: 8px;
+    font-size: 1em;
+    min-width: 180px;
+    background: #f8f9fa;
+}
+
+.turnos-grid {
+    display: grid;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.turno-item {
+    background: #ffffff;  /* Fondo blanco sólido */
+    border: 2px solid #4a5f80;
+    border-radius: 12px;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 20px;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.turno-item:hover {
+    border-color: #ff9a7a;
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(255, 154, 122, 0.2);
+}
+
+.turno-hora {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #2d3d50;
+    text-align: center;
+}
+
+.turno-info h4 {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    color: #2d3d50;
+}
+
+.turno-info p {
+    color: #67676d;
+    font-size: 0.9em;
+}
+
+.turno-acciones {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-completar {
+    background: #10b981;  /* Verde sólido */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.btn-completar:hover {
+    background: #059669;
+    transform: translateY(-1px);
+}
+
+.btn-eliminar-turno {
+    background: #ef4444;  /* Rojo sólido */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.btn-eliminar-turno:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+/* Gastos */
+.gastos-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.summary-item-gasto {
+    padding: 20px;
+    background: #ffffff;  /* Fondo blanco sólido */
+    border: 2px solid #ef4444;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.summary-value-gasto {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #ef4444;
+}
+
+.summary-value-ingreso {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #10b981;
+}
+
+.summary-value-balance {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: #2d3d50;
+}
+
+/* Cierre de Caja */
+.cierre-info {
+    background: #ffffff;  /* Fondo blanco sólido */
+    border: 2px solid #4a5f80;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.cierre-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #4a5f80;
+}
+
+.cierre-row:last-child {
+    border-bottom: none;
+}
+
+.cierre-label {
+    color: #67676d;
+}
+
+.cierre-value {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #2d3d50;
+}
+
+.cierre-total {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 3px solid #ff9a7a !important;
+}
+
+.cierre-value-total {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #ff9a7a;
+}
+
+.cierre-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.cierre-form small {
+    color: #67676d;
+    font-size: 0.85em;
+    margin-top: 5px;
+    display: block;
+}
+
+.cierre-form textarea {
+    padding: 12px 15px;
+    border: 2px solid #4a5f80;
+    border-radius: 10px;
+    font-size: 1em;
+    font-family: inherit;
+    resize: vertical;
+    transition: all 0.3s ease;
+}
+
+.cierre-form textarea:focus {
+    outline: none;
+    border-color: #ff9a7a;
+    box-shadow: 0 0 0 3px rgba(255, 154, 122, 0.1);
+}
+
+.cierre-diferencia {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 10px;
+    align-items: flex-start;
+}
+
+.cierre-diferencia.positiva {
+    background: #d4edda;
+    border-color: #28a745;
+}
+
+.cierre-diferencia.negativa {
+    background: #f8d7da;
+    border-color: #dc3545;
+}
+
+.diferencia-icon {
+    width: 24px;
+    height: 24px;
+    color: #856404;
+    flex-shrink: 0;
+}
+
+.cierre-diferencia.positiva .diferencia-icon {
+    color: #155724;
+}
+
+.cierre-diferencia.negativa .diferencia-icon {
+    color: #721c24;
+}
+
+#efectivoFisico {
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+/* Responsive para nuevas secciones */
+@media (max-width: 768px) {
+    .turno-item {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .turno-acciones {
+        justify-content: center;
+    }
+
+    .gastos-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .cierre-row {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .fecha-selector {
+        flex-wrap: wrap;
+    }
+}
+
+/* ============================================
+   BONOS MENSUALES - ESTILOS
+   SIN GRADIENTES - COLORES SÓLIDOS
+   Azul oscuro predominante (#2d3d50)
+   ============================================
+   Agregar al final de styles.css o nuevas-secciones.css
+*/
+
+/* Contenedor principal */
+.bonos-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header con botón */
+.bonos-header {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-nuevo-bono {
+    background: #ff9a7a;  /* Color sólido naranja */
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    font-size: 15px;
+}
+
+.btn-nuevo-bono:hover {
+    transform: translateY(-2px);
+    background: #ff8461;  /* Naranja más oscuro en hover */
+    box-shadow: 0 6px 20px rgba(255, 154, 122, 0.4);
+}
+
+/* Tarjetas de bonos activos */
+.bono-card {
+    background: #ffffff;  /* Fondo blanco sólido */
+    border: 2px solid #4a5f80;  /* Borde azul medio */
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.bono-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(45, 61, 80, 0.15);
+    border-color: #ff9a7a;  /* Borde naranja en hover */
+}
+
+.bono-card.vencido {
+    border-color: #ef4444;  /* Borde rojo para vencidos */
+    background: #fef2f2;    /* Fondo rojo muy claro */
+    opacity: 0.8;
+}
+
+.bono-card.por-vencer {
+    border-color: #f59e0b;  /* Borde amarillo para por vencer */
+    background: #fffbeb;    /* Fondo amarillo muy claro */
+}
+
+/* Header del bono */
+.bono-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #4a5f80;  /* Línea azul medio */
+}
+
+.bono-header h4 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #2d3d50;  /* Azul oscuro */
+}
+
+.bono-meta {
+    margin: 6px 0 0;
+    font-size: 13px;
+    color: #67676d;  /* Gris */
+    font-weight: 500;
+}
+
+.bono-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+    background: #10b981;  /* Verde sólido */
+    color: white;
+}
+
+.bono-card.vencido .bono-badge {
+    background: #ef4444;  /* Rojo sólido */
+}
+
+.bono-card.por-vencer .bono-badge {
+    background: #f59e0b;  /* Amarillo sólido */
+}
+
+/* Barra de progreso */
+.bono-progress {
+    margin: 20px 0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background: #e5e7eb;  /* Gris claro */
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #2d3d50;  /* Azul oscuro sólido */
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.bono-card.vencido .progress-fill {
+    background: #ef4444;  /* Rojo sólido para vencidos */
+}
+
+.bono-card.por-vencer .progress-fill {
+    background: #f59e0b;  /* Amarillo sólido para por vencer */
+}
+
+.progress-text {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #67676d;  /* Gris */
+}
+
+.progress-text strong {
+    color: #2d3d50;  /* Azul oscuro */
+    font-size: 16px;
+}
+
+/* Grid de información */
+.bono-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
+    background: #f8f9fa;  /* Fondo gris muy claro */
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.info-label {
+    font-size: 13px;
+    color: #67676d;  /* Gris */
+    font-weight: 500;
+}
+
+.info-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2d3d50;  /* Azul oscuro */
+}
+
+.text-danger {
+    color: #ef4444 !important;  /* Rojo */
+}
+
+.text-warning {
+    color: #f59e0b !important;  /* Amarillo */
+}
+
+.text-success {
+    color: #10b981 !important;  /* Verde */
+}
+
+/* Acciones del bono */
+.bono-actions {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #4a5f80;  /* Línea azul medio */
+    display: flex;
+    gap: 12px;
+}
+
+.btn-usar-bono {
+    flex: 1;
+    background: #10b981;  /* Verde sólido */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-usar-bono:hover {
+    transform: translateY(-2px);
+    background: #059669;  /* Verde más oscuro en hover */
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.bono-card.vencido .btn-usar-bono {
+    background: #6b7280;  /* Gris sólido para vencidos */
+    cursor: not-allowed;
+}
+
+.bono-card.vencido .btn-usar-bono:hover {
+    background: #6b7280;  /* Sin cambio en hover si está vencido */
+    transform: none;
+    box-shadow: none;
+}
+
+/* Sección de bonos activos */
+.seccion-bonos-activos {
+    margin-bottom: 40px;
+}
+
+.seccion-bonos-activos h3 {
+    color: #2d3d50;  /* Azul oscuro */
+    font-size: 1.4em;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Historial de bonos */
+.historial-bonos {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    border: 2px solid #4a5f80;  /* Borde azul medio */
+}
+
+.historial-bonos h3 {
+    color: #2d3d50;  /* Azul oscuro */
+    font-size: 1.4em;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Tabla de historial */
+.tabla-historial-bonos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.tabla-historial-bonos thead {
+    background: #2d3d50;  /* Azul oscuro */
+    color: white;
+}
+
+.tabla-historial-bonos th {
+    padding: 15px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+.tabla-historial-bonos th:first-child {
+    border-radius: 8px 0 0 0;
+}
+
+.tabla-historial-bonos th:last-child {
+    border-radius: 0 8px 0 0;
+}
+
+.tabla-historial-bonos td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #4a5f80;  /* Línea azul medio */
+    color: #2d3d50;  /* Azul oscuro */
+}
+
+.tabla-historial-bonos tr:last-child td {
+    border-bottom: none;
+}
+
+.tabla-historial-bonos tbody tr:hover {
+    background: #f8f9fa;  /* Fondo gris muy claro en hover */
+}
+
+/* Estado vacío */
+.bonos-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #67676d;  /* Gris */
+}
+
+.bonos-empty-icon {
+    font-size: 4em;
+    margin-bottom: 20px;
+    opacity: 0.3;
+    color: #4a5f80;  /* Azul medio */
+}
+
+.bonos-empty h4 {
+    color: #2d3d50;  /* Azul oscuro */
+    font-size: 1.3em;
+    margin-bottom: 10px;
+}
+
+.bonos-empty p {
+    color: #67676d;  /* Gris */
+    font-size: 1em;
+}
+
+/* Contador de cortes restantes destacado */
+.cortes-restantes-destacado {
+    background: #2d3d50;  /* Azul oscuro */
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin: 15px 0;
+}
+
+.cortes-restantes-destacado .numero {
+    font-size: 2.5em;
+    font-weight: 700;
+    display: block;
+    line-height: 1;
+}
+
+.cortes-restantes-destacado .texto {
+    font-size: 0.9em;
+    opacity: 0.9;
+    margin-top: 5px;
+}
+
+/* Responsive para bonos */
+@media (max-width: 768px) {
+    .bonos-container {
+        padding: 12px;
+    }
+
+    .bono-card {
+        padding: 16px;
+    }
+
+    .bono-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .bono-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .btn-nuevo-bono {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .bono-actions {
+        flex-direction: column;
+    }
+
+    .btn-usar-bono {
+        width: 100%;
+    }
+
+    .tabla-historial-bonos {
+        font-size: 0.9em;
+    }
+
+    .tabla-historial-bonos th,
+    .tabla-historial-bonos td {
+        padding: 10px 8px;
+    }
+
+    .cortes-restantes-destacado .numero {
+        font-size: 2em;
+    }
+}
+
+/* ============================================
+   BUSCADOR DE BONOS
+   ============================================ */
+
+.bonos-header {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.search-container {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    color: var(--gray);
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 16px 12px 48px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-input::placeholder {
+    color: var(--gray);
+}
+
+/* Estado oculto para bonos filtrados */
+.bono-card.hidden {
+    display: none;
+}
+
+/* Mensaje cuando no hay resultados */
+.no-results-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gray);
+}
+
+.no-results-message svg {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+/* Responsive para buscador */
+@media (max-width: 768px) {
+    .bonos-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-container {
+        width: 100%;
+    }
+
+    .btn-nuevo-bono {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+
+/* Boton registrar pago Nacho */
+.btn-registrar-pago-nacho {
+    background: rgba(255,255,255,0.25);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.5);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-registrar-pago-nacho:hover {
+    background: rgba(255,255,255,0.4);
+    transform: translateY(-1px);
+}
+
+/* Boton toggle historial */
+.btn-toggle-historial {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-toggle-historial:hover {
+    background: rgba(255,255,255,0.3);
+}
