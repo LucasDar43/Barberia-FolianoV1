@@ -1,4 +1,4 @@
-const CACHE_NAME = 'barberia-foliano-v1.0';
+const CACHE_NAME = 'barberia-foliano-v2';
 
 const ARCHIVOS_A_CACHEAR = [
     '/',

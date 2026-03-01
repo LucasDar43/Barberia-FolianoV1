@@ -55,6 +55,7 @@ class BarberiaSystem {
         this.cortes = [];
         this.deudas = [];
         this.cierres = [];
+        this.ventas = [];
         this.solicitudes = [];
         this.pagosNacho = [];
 
@@ -78,7 +79,7 @@ class BarberiaSystem {
         this.unsubscribeSolicitudes = null;
 
         console.log('🚀 Sistema Barbería Foliano\'s v1.0 iniciando...');
-        console.log('APP VERSION: 2026-02-07');
+        console.log('APP VERSION: 2026-03-01');
 
         this.init();
     }
@@ -214,6 +215,16 @@ class BarberiaSystem {
             console.error('❌ Error en listener de cierres:', error);
         });
 
+        const qVentas = query(collection(db, 'ventas'), orderBy('fecha', 'desc'));
+        this.unsubscribeVentas = onSnapshot(qVentas, (snapshot) => {
+            this.ventas = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+            if (this.currentPage === 'cierre' && typeof this.renderCierre === 'function') {
+                this.renderCierre();
+            }
+        }, (error) => {
+            console.error('Error en listener de ventas:', error);
+        });
+
         this.unsubscribeSolicitudes = onSnapshot(collection(db, 'solicitudes'), (snapshot) => {
             this.solicitudes = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
             if (this.userRole === 'admin') this.actualizarBadgeSolicitudes();
@@ -270,7 +281,17 @@ class BarberiaSystem {
         });
 
         ['montoEfectivo', 'montoTransferencia'].forEach(id => {
-            document.getElementById(id)?.addEventListener('input', () => this.calcularTotalMixto());
+            document.getElementById(id)?.addEventListener('input', () => {
+                this.calcularTotalMixto();
+                this.actualizarResumenTotal();
+            });
+        });
+
+        document.getElementById('monto')?.addEventListener('input', () => this.actualizarResumenTotal());
+        document.getElementById('montoProducto')?.addEventListener('input', () => this.actualizarResumenTotal());
+
+        document.querySelectorAll('input[name="metodoPago"]').forEach(radio => {
+            radio.addEventListener('change', () => this.actualizarResumenTotal());
         });
 
         document.getElementById('esDeuda')?.addEventListener('change', (e) => {
@@ -374,8 +395,42 @@ class BarberiaSystem {
                 montoInput.style.cursor = 'not-allowed';
                 montoInput.title = 'El precio es fijo y no se puede modificar';
             }
+          }
         }
-    }
+
+        toggleVentaProducto() {
+            const checked = document.getElementById('tieneVentaProducto')?.checked;
+            const fields = document.getElementById('ventaProductoFields');
+            if (fields) fields.style.display = checked ? 'block' : 'none';
+            this.actualizarResumenTotal();
+        }
+
+        actualizarResumenTotal() {
+            const tieneVenta = document.getElementById('tieneVentaProducto')?.checked;
+            const resumen = document.getElementById('resumenTotal');
+            if (!resumen) return;
+
+            const metodoPago = document.querySelector('input[name="metodoPago"]:checked')?.value;
+            let montoCorte = 0;
+            if (metodoPago === 'mixto') {
+                const ef = parseFloat(document.getElementById('montoEfectivo')?.value) || 0;
+                const tr = parseFloat(document.getElementById('montoTransferencia')?.value) || 0;
+                montoCorte = ef + tr;
+            } else {
+                montoCorte = parseFloat(document.getElementById('monto')?.value) || 0;
+            }
+            const montoProducto = tieneVenta ? (parseFloat(document.getElementById('montoProducto')?.value) || 0) : 0;
+
+            if (tieneVenta && (montoCorte > 0 || montoProducto > 0)) {
+                resumen.style.display = 'block';
+                document.getElementById('resumenMonto').textContent = this.formatCurrency(montoCorte);
+                document.getElementById('resumenProducto').textContent = this.formatCurrency(montoProducto);
+                document.getElementById('resumenTotalMonto').textContent = this.formatCurrency(montoCorte + montoProducto);
+            } else {
+                resumen.style.display = 'none';
+            }
+        }
+
 
     // ==================== DASHBOARD ====================
 
@@ -503,6 +558,7 @@ class BarberiaSystem {
             if (mixtoFields) mixtoFields.style.display = 'none';
             if (montoSimple) montoSimple.style.display = 'block';
         }
+        this.actualizarResumenTotal();
     }
 
     calcularTotalMixto() {
@@ -539,6 +595,39 @@ class BarberiaSystem {
             if (!this.config.usarPreciosFijos) console.log('  - Precios fijos desactivados');
             if (!montoInput) console.log('  - Input de monto no encontrado');
             if (!tipoCorte) console.log('  - Tipo de corte no seleccionado');
+        }
+    }
+
+    toggleVentaProducto() {
+        const checked = document.getElementById('tieneVentaProducto')?.checked;
+        const fields = document.getElementById('ventaProductoFields');
+        if (fields) fields.style.display = checked ? 'block' : 'none';
+        this.actualizarResumenTotal();
+    }
+
+    actualizarResumenTotal() {
+        const tieneVenta = document.getElementById('tieneVentaProducto')?.checked;
+        const resumen = document.getElementById('resumenTotal');
+        if (!resumen) return;
+
+        const metodoPago = document.querySelector('input[name="metodoPago"]:checked')?.value;
+        let montoCorte = 0;
+        if (metodoPago === 'mixto') {
+            const ef = parseFloat(document.getElementById('montoEfectivo')?.value) || 0;
+            const tr = parseFloat(document.getElementById('montoTransferencia')?.value) || 0;
+            montoCorte = ef + tr;
+        } else {
+            montoCorte = parseFloat(document.getElementById('monto')?.value) || 0;
+        }
+        const montoProducto = tieneVenta ? (parseFloat(document.getElementById('montoProducto')?.value) || 0) : 0;
+
+        if (tieneVenta && (montoCorte > 0 || montoProducto > 0)) {
+            resumen.style.display = 'block';
+            document.getElementById('resumenMonto').textContent = this.formatCurrency(montoCorte);
+            document.getElementById('resumenProducto').textContent = this.formatCurrency(montoProducto);
+            document.getElementById('resumenTotalMonto').textContent = this.formatCurrency(montoCorte + montoProducto);
+        } else {
+            resumen.style.display = 'none';
         }
     }
 
@@ -599,6 +688,22 @@ class BarberiaSystem {
             registradoPor: this.userName
         };
 
+        // Leer datos de venta de producto
+                const tieneVentaProducto = document.getElementById('tieneVentaProducto')?.checked;
+                const descripcionProducto = document.getElementById('descripcionProducto')?.value?.trim() || '';
+                const montoProducto = tieneVentaProducto ? (parseFloat(document.getElementById('montoProducto')?.value) || 0) : 0;
+
+                if (tieneVentaProducto) {
+                    if (!descripcionProducto) {
+                        this.showToast('Ingrese la descripcion del producto', 'error');
+                        return;
+                    }
+                    if (montoProducto <= 0) {
+                        this.showToast('Ingrese un monto valido para el producto', 'error');
+                        return;
+                    }
+                }
+
         try {
             if (esDeuda) {
                 const montoPagado = parseFloat(document.getElementById('montoPagado')?.value) || 0;
@@ -626,6 +731,21 @@ class BarberiaSystem {
                 await addDoc(collection(db, 'cortes'), corte);
             }
 
+            // Guardar venta de producto por separado
+                        if (tieneVentaProducto && montoProducto > 0) {
+                            await addDoc(collection(db, 'ventas'), {
+                                fecha: Timestamp.now(),
+                                peluquero,
+                                cliente,
+                                descripcion: descripcionProducto,
+                                monto: montoProducto,
+                                metodoPago,
+                                montoEfectivo: metodoPago === 'efectivo' ? montoProducto : (metodoPago === 'mixto' ? montoProducto : 0),
+                                montoTransferencia: metodoPago === 'transferencia' ? montoProducto : 0,
+                                registradoPor: this.userName
+                            });
+                        }
+
             document.getElementById('corteForm')?.reset();
             
             // Si es peluquero, restaurar su nombre después del reset
@@ -639,9 +759,16 @@ class BarberiaSystem {
             document.getElementById('pagoMixtoFields').style.display = 'none';
             document.getElementById('deudaFields').style.display = 'none';
             document.getElementById('montoSimpleField').style.display = 'block';
+            const ventaFields = document.getElementById('ventaProductoFields');
+                        if (ventaFields) ventaFields.style.display = 'none';
+                        const resumenEl = document.getElementById('resumenTotal');
+                        if (resumenEl) resumenEl.style.display = 'none';
 
             console.log('Corte registrado:', cliente, '-', this.formatCurrency(monto));
-            this.showToast('Corte registrado exitosamente', 'success');
+            const msg = tieneVentaProducto
+                ? 'Corte y venta de producto registrados'
+                : 'Corte registrado exitosamente';
+            this.showToast(msg, 'success');
             this.setupRegistroPage();
         } catch (error) {
             console.error('❌ Error al registrar corte:', error);
@@ -1749,6 +1876,7 @@ class BarberiaSystem {
             if (this.unsubscribeCortes) this.unsubscribeCortes();
             if (this.unsubscribeDeudas) this.unsubscribeDeudas();
             if (this.unsubscribeCierres) this.unsubscribeCierres();
+            if (this.unsubscribeVentas) this.unsubscribeVentas();
             if (this.unsubscribeSolicitudes) this.unsubscribeSolicitudes();
             if (this.unsubscribeBonos) this.unsubscribeBonos();
             

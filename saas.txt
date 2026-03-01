@@ -1,0 +1,286 @@
+# Blueprint V2 — Barbería SaaS
+
+## 1) Objetivo
+Construir una **V2 multi-tenant** (muchas barberías) con foco en:
+- Seguridad real en backend.
+- Modularización y mantenibilidad.
+- Escalabilidad funcional (más sucursales, más usuarios, más métricas).
+- Operación confiable (auditoría, backup, observabilidad, migraciones).
+
+Stack propuesto:
+- **Backend**: Java 21 + Spring Boot 3 + Spring Security + JWT + JPA/Hibernate.
+- **Frontend**: Angular (standalone components, guards, lazy loading).
+- **Base de datos**: PostgreSQL (recomendado) o MySQL.
+- **Infra**: Docker + CI/CD + Flyway + monitoreo básico.
+
+---
+
+## 2) Principios de arquitectura
+
+1. **Backend-first security**
+   - Toda autorización en API (no confiar en UI).
+   - RBAC por tenant y sucursal.
+
+2. **Multi-tenant explícito**
+   - `tenant_id` en tablas de negocio.
+   - Filtros obligatorios por tenant en cada query.
+
+3. **Módulos por dominio**
+   - auth, usuarios, cortes, deudas, caja, bonos, solicitudes, reportes.
+
+4. **Auditoría por defecto**
+   - `created_at`, `updated_at`, `created_by`, `updated_by`.
+
+5. **Idempotencia y consistencia**
+   - Operaciones sensibles con transacciones.
+   - Evitar doble cobro/doble cierre.
+
+---
+
+## 3) Modelo de negocio objetivo (SaaS)
+
+### Entidades de alto nivel
+- **Tenant**: barbería cliente (empresa).
+- **Branch**: sucursal de la barbería.
+- **User**: usuario del sistema.
+- **RoleAssignment**: rol por tenant/sucursal.
+- **Cut**: servicio registrado (corte, barba, etc.).
+- **Debt**: deuda asociada a cliente.
+- **DebtPayment**: pagos de deuda (parcial/total).
+- **CashSession**: apertura/cierre diario de caja.
+- **CashMovement**: movimientos de caja (apertura/retiro/ajuste/cierre).
+- **BonusPlan / BonusPurchase / BonusUse**: bonos mensuales.
+- **Request**: solicitudes (eliminación, cobro, etc.) con workflow.
+- **Catalog**: precios, tipos de corte, métodos de pago.
+
+### Roles sugeridos
+- `PLATFORM_ADMIN` (operación SaaS tuya).
+- `OWNER` (dueño barbería tenant).
+- `ADMIN` (admin operativo de barbería).
+- `BARBER` (peluquero).
+- `CASHIER` (si aplica).
+
+---
+
+## 4) Diseño de base de datos (inicial)
+
+> Recomendación: **PostgreSQL**.
+
+### Tablas núcleo
+- `tenants(id, name, plan, status, created_at)`
+- `branches(id, tenant_id, name, timezone, currency, active)`
+- `users(id, email, password_hash, full_name, active, created_at)`
+- `user_tenant_roles(id, user_id, tenant_id, branch_id nullable, role)`
+
+### Operación diaria
+- `cuts(id, tenant_id, branch_id, barber_user_id, customer_name, service_type, payment_method, amount_total, amount_cash, amount_transfer, occurred_at, notes, created_by)`
+- `debts(id, tenant_id, branch_id, customer_name, barber_user_id, original_amount, paid_amount, balance_amount, status, created_at)`
+- `debt_payments(id, tenant_id, debt_id, amount, payment_method, paid_at, created_by)`
+
+### Caja
+- `cash_sessions(id, tenant_id, branch_id, business_date, opened_by, opened_at, opening_amount, closed_by, closed_at, expected_cash, actual_cash, diff_amount, status)`
+- `cash_movements(id, tenant_id, branch_id, cash_session_id, type, amount, reason, occurred_at, created_by)`
+
+### Bonos
+- `bonus_plans(id, tenant_id, branch_id, name, total_services, validity_days, price, active)`
+- `bonus_purchases(id, tenant_id, branch_id, plan_id, customer_name, start_date, end_date, remaining_services, status, created_by)`
+- `bonus_usages(id, tenant_id, branch_id, purchase_id, cut_id nullable, used_at, created_by)`
+
+### Solicitudes
+- `requests(id, tenant_id, branch_id, type, target_entity, target_id, payload_json, status, requested_by, reviewed_by, requested_at, reviewed_at, requester_note, reviewer_note)`
+
+### Auditoría técnica
+- `audit_events(id, tenant_id, actor_user_id, action, entity, entity_id, before_json, after_json, ip, user_agent, created_at)`
+
+### Índices mínimos
+- Por tenant + fecha en tablas transaccionales.
+- Unicidad por `cash_sessions(tenant_id, branch_id, business_date)`.
+- Índices para filtros frecuentes (barbero, método pago, estado, rango fechas).
+
+---
+
+## 5) Backend Spring Boot — estructura sugerida
+
+```text
+com.foliano
+ ├─ config
+ ├─ common
+ │   ├─ security
+ │   ├─ exceptions
+ │   ├─ auditing
+ │   └─ tenancy
+ ├─ auth
+ ├─ users
+ ├─ catalog
+ ├─ cuts
+ ├─ debts
+ ├─ cash
+ ├─ bonuses
+ ├─ requests
+ ├─ reports
+ └─ billing (futuro SaaS)
+```
+
+### Patrón interno por módulo
+- `Controller` (REST)
+- `Service` (reglas de negocio)
+- `Repository` (JPA)
+- `Entity`
+- `DTO` + `Mapper`
+- `Policy` (autorización fina)
+
+### Contratos API (ejemplos)
+- `POST /api/v1/auth/login`
+- `GET /api/v1/me`
+- `POST /api/v1/cuts`
+- `GET /api/v1/cuts?from=&to=&barber=&branch=`
+- `POST /api/v1/debts/{id}/payments`
+- `POST /api/v1/cash-sessions/open`
+- `POST /api/v1/cash-sessions/{id}/close`
+- `POST /api/v1/requests`
+- `POST /api/v1/requests/{id}/approve`
+
+---
+
+## 6) Seguridad (no negociable)
+
+1. **Autenticación**
+   - JWT access token corto + refresh token rotativo.
+   - Hash de contraseña con BCrypt/Argon2.
+
+2. **Autorización**
+   - RBAC + políticas por recurso.
+   - Verificar tenant y branch en cada operación.
+
+3. **Hardening**
+   - Rate limiting en login y endpoints sensibles.
+   - CORS estricto por dominio.
+   - CSRF si usás cookies; si JWT bearer, no CSRF clásico.
+   - Validación de input con Bean Validation.
+
+4. **Secret management**
+   - Nada de secretos en repo.
+   - Variables de entorno / secret manager.
+
+5. **Auditoría y trazabilidad**
+   - Registrar acciones críticas (eliminar corte, aprobar solicitud, cierre caja).
+
+---
+
+## 7) Frontend Angular — diseño
+
+### Módulos/páginas
+- `auth` (login, recuperación)
+- `dashboard`
+- `cuts` (registro + historial)
+- `debts`
+- `bonuses`
+- `cash`
+- `requests`
+- `settings`
+
+### Buenas prácticas
+- Guards por autenticación y permisos.
+- Interceptor para token + refresh automático.
+- Formularios reactivos con validación fuerte.
+- Estado ligero con signals o RxJS store simple.
+- Componentes presentacionales y contenedores separados.
+
+### UX
+- Mantener flujo actual (porque ya valida negocio).
+- Mejorar accesibilidad y feedback (toasts, loading states, errores claros).
+
+---
+
+## 8) Reportes y KPIs
+
+KPIs mínimos por tenant/sucursal:
+- Total diario / semanal / mensual.
+- Ticket promedio.
+- % efectivo vs transferencia.
+- Ranking barberos por ingresos/cantidad.
+- Deuda total y aging.
+- Diferencia de caja (esperado vs físico).
+- Uso y vencimiento de bonos.
+
+Sugerencia técnica:
+- Query optimizada + vistas/materialized views para reportes pesados.
+
+---
+
+## 9) Roadmap de implementación (12 semanas)
+
+### Fase 0 (Semana 1)
+- Descubrimiento funcional y modelo de datos final.
+- Wireframes rápidos de pantallas clave.
+
+### Fase 1 (Semanas 2-4)
+- Base backend: auth, tenancy, usuarios, catálogo.
+- Setup Angular base + layout + auth.
+- Flyway + pipeline CI básico.
+
+### Fase 2 (Semanas 5-7)
+- Módulos cuts + debts + debt payments.
+- Historial y filtros.
+- Tests de integración en backend.
+
+### Fase 3 (Semanas 8-9)
+- Caja (apertura/retiros/cierre) + validaciones transaccionales.
+- Solicitudes con aprobación/rechazo.
+
+### Fase 4 (Semanas 10-11)
+- Bonos + reportes + dashboards.
+- Auditoría de acciones críticas.
+
+### Fase 5 (Semana 12)
+- Hardening final, performance básico, UAT.
+- Plan de cutover/migración de datos.
+
+---
+
+## 10) Plan de migración desde V1
+
+1. Congelar nuevas features en V1 (solo fixes).
+2. Definir mapa de datos V1 → V2.
+3. Exportar/transformar/importar datos (script ETL).
+4. Ejecutar piloto con 1 barbería.
+5. Corregir gaps.
+6. Migración progresiva por barbería (tenant onboarding).
+
+---
+
+## 11) Testing strategy
+
+### Backend
+- Unit tests en reglas de negocio.
+- Integration tests con Testcontainers (Postgres).
+- Contract tests para endpoints clave.
+
+### Frontend
+- Unit tests de componentes críticos.
+- E2E de flujos principales (login, registrar corte, cobrar deuda, cerrar caja).
+
+### Seguridad
+- Checklist OWASP ASVS básico.
+- Pruebas de autorización (horizontal/vertical privilege escalation).
+
+---
+
+## 12) Riesgos y mitigaciones
+
+- **Riesgo**: scope creep.
+  - Mitigación: roadmap por fases y definición de “must-have”.
+- **Riesgo**: migración de datos inconsistente.
+  - Mitigación: ETL versionado + validaciones por conteo y sumas.
+- **Riesgo**: fricción de usuarios al cambiar UI.
+  - Mitigación: mantener flujos conocidos y capacitación corta.
+
+---
+
+## 13) Decisiones recomendadas (resumen ejecutivo)
+
+1. Sí, rehacer con **Spring Boot + Angular** es correcto.
+2. Elegir **PostgreSQL** como default (MySQL también válido).
+3. Diseñar multi-tenant desde inicio (tenant_id everywhere).
+4. Seguridad backend estricta y auditoría obligatoria.
+5. Entregar por fases, no “big bang”.

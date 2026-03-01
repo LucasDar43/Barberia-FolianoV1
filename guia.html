@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía — Barbería Foliano's</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #2d3d50;
+            --navy-dark: #1a2332;
+            --navy-light: #4a5f80;
+            --cream: #faf8f4;
+            --warm: #f5f0e8;
+            --gold: #c9a84c;
+            --gold-light: #e8d5a3;
+            --rust: #ff9a7a;
+            --text: #2d3d50;
+            --gray: #67676d;
+            --border: rgba(45,61,80,0.12);
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* HERO */
+        .hero {
+            background: var(--navy);
+            color: white;
+            padding: 48px 24px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -60px; right: -60px;
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            background: rgba(201,168,76,0.12);
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -40px; left: -40px;
+            width: 160px; height: 160px;
+            border-radius: 50%;
+            background: rgba(255,154,122,0.1);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(201,168,76,0.2);
+            border: 1px solid rgba(201,168,76,0.4);
+            color: var(--gold-light);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-bottom: 18px;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2em;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 10px;
+        }
+
+        .hero h1 span { color: var(--gold-light); }
+
+        .hero p {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .version-pill {
+            display: inline-block;
+            margin-top: 20px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        /* NAV */
+        .nav-pills {
+            display: flex;
+            gap: 8px;
+            padding: 16px 16px;
+            overflow-x: auto;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            scrollbar-width: none;
+        }
+        .nav-pills::-webkit-scrollbar { display: none; }
+
+        .nav-pill {
+            flex-shrink: 0;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray);
+            background: var(--warm);
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .nav-pill:hover, .nav-pill.active {
+            background: var(--navy);
+            color: white;
+        }
+
+        /* CONTENT */
+        .content {
+            padding: 24px 16px 60px;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        /* SECTION */
+        .section {
+            margin-bottom: 32px;
+            scroll-margin-top: 70px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .section-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        /* CARDS */
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card p {
+            color: var(--gray);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* ROLES TABLE */
+        .roles-grid {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .roles-header {
+            display: grid;
+            grid-template-columns: 1fr 80px 80px;
+            background: var(--navy);
+            color: white;
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .roles-header span:first-child { text-align: left; }
+
+        .roles-row {
+            display: grid;
+            grid-template-columns: 1fr 80px 80px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            align-items: center;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .roles-row:last-child { border-bottom: none; }
+        .roles-row:hover { background: var(--warm); }
+        .roles-row span:first-child { text-align: left; font-weight: 500; color: var(--navy); }
+
+        .check { color: var(--success); font-size: 16px; }
+        .cross { color: #d1d5db; font-size: 16px; }
+        .partial { color: var(--gold); font-size: 11px; font-weight: 600; }
+
+        /* CASOS DE USO */
+        .caso {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .caso-header {
+            background: var(--navy);
+            color: white;
+            padding: 14px 18px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .caso-body { padding: 16px 18px; }
+
+        .codigo {
+            background: var(--warm);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            border-left: 3px solid var(--gold);
+        }
+
+        .codigo p {
+            color: var(--navy);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .codigo p:last-child { margin-bottom: 0; }
+
+        .pasos { list-style: none; }
+
+        .pasos li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .pasos li:last-child { border-bottom: none; }
+
+        .paso-num {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--navy);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .resultado {
+            background: #ecfdf5;
+            border: 1px solid #d1fae5;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #065f46;
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        /* FLUJO DIARIO */
+        .flujo-card {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .flujo-header {
+            padding: 14px 18px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .flujo-header.morning { background: #fffbeb; color: #92400e; }
+        .flujo-header.day { background: #eff6ff; color: #1e40af; }
+        .flujo-header.night { background: #f0fdf4; color: #065f46; }
+
+        .flujo-body {
+            padding: 14px 18px;
+        }
+
+        .flujo-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 7px 0;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .flujo-item:last-child { border-bottom: none; }
+        .flujo-dot { color: var(--navy); font-size: 16px; margin-top: -1px; }
+
+        /* INSTALAR */
+        .install-card {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+
+        .install-header {
+            padding: 14px 18px;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .install-steps {
+            padding: 16px 18px;
+            list-style: none;
+        }
+
+        .install-steps li {
+            display: flex;
+            gap: 10px;
+            padding: 7px 0;
+            font-size: 14px;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .install-steps li:last-child { border-bottom: none; }
+
+        .install-num {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--rust);
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* MEJORAS */
+        .mejora-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .mejora-item:last-child { border-bottom: none; }
+
+        .mejora-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--warm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .mejora-text strong {
+            display: block;
+            font-weight: 600;
+            color: var(--navy);
+            margin-bottom: 2px;
+        }
+
+        .mejora-text span { color: var(--gray); font-size: 13px; }
+
+        /* FOOTER */
+        .footer {
+            background: var(--navy);
+            color: white;
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4em;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+
+        .footer-logo span { color: var(--gold-light); }
+
+        .footer p {
+            color: rgba(255,255,255,0.5);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .footer-divider {
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin: 20px 0;
+        }
+
+        .zenta {
+            font-size: 12px;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .zenta strong { color: var(--gold-light); }
+
+        /* CHIP */
+        .chip {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .chip-navy { background: rgba(45,61,80,0.1); color: var(--navy); }
+        .chip-gold { background: rgba(201,168,76,0.15); color: #8a6d1e; }
+
+        /* FEATURES GRID */
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .feature-item {
+            background: white;
+            border-radius: 12px;
+            padding: 14px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .feature-item .emoji { font-size: 24px; margin-bottom: 6px; }
+        .feature-item strong { display: block; font-size: 13px; color: var(--navy); font-weight: 600; }
+        .feature-item span { font-size: 12px; color: var(--gray); }
+    </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-badge">Zenta Solutions</div>
+    <h1>Barbería<br><span>Foliano's</span></h1>
+    <p>Sistema de Administración — Guía de uso completa</p>
+    <div class="version-pill">v1.0.0 · 2026</div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-pills">
+    <a href="#caracteristicas" class="nav-pill">✨ Funciones</a>
+    <a href="#roles" class="nav-pill">👥 Roles</a>
+    <a href="#casos" class="nav-pill">📖 Casos de uso</a>
+    <a href="#flujo" class="nav-pill">📅 Flujo diario</a>
+    <a href="#instalar" class="nav-pill">📱 Instalar</a>
+    <a href="#mejoras" class="nav-pill">🚀 Mejoras</a>
+</nav>
+
+<div class="content">
+
+    <!-- CARACTERÍSTICAS -->
+    <div class="section" id="caracteristicas">
+        <div class="section-header">
+            <div class="section-icon">✨</div>
+            <div class="section-title">Características Principales</div>
+        </div>
+
+        <div class="features-grid" style="margin-bottom:12px;">
+            <div class="feature-item">
+                <div class="emoji">🔐</div>
+                <strong>Login seguro</strong>
+                <span>Roles diferenciados</span>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">✂️</div>
+                <strong>Registro de cortes</strong>
+                <span>Efectivo, transferencia, mixto</span>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">🚨</div>
+                <strong>Deudores</strong>
+                <span>Pagos parciales y totales</span>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">🎟️</div>
+                <strong>Bonos</strong>
+                <span>4 cortes por cliente</span>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">💵</div>
+                <strong>Comisiones</strong>
+                <span>Franco 40% · Nacho 60%</span>
+            </div>
+            <div class="feature-item">
+                <div class="emoji">💰</div>
+                <strong>Cierre de caja</strong>
+                <span>Solo para Franco</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📦 Venta de Productos</div>
+            <p>Al registrar un corte podés agregar la venta de un producto (shampoo, cera, crema, etc.). El monto se registra por separado y no afecta las comisiones del peluquero.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📋 Solicitudes</div>
+            <p>Nacho puede pedir a Franco que elimine un corte o que registre el cobro de una deuda. Franco recibe una notificación y puede aprobar o rechazar.</p>
+        </div>
+
+        <div class="card">
+            <div class="card-title">📱 PWA Instalable</div>
+            <p>La app se puede instalar en el celular como si fuera una app nativa. Funciona en iPhone, Android y PC.</p>
+        </div>
+    </div>
+
+    <!-- ROLES -->
+    <div class="section" id="roles">
+        <div class="section-header">
+            <div class="section-icon">👥</div>
+            <div class="section-title">Roles y Accesos</div>
+        </div>
+
+        <div class="roles-grid">
+            <div class="roles-header">
+                <span>Sección</span>
+                <span>Franco</span>
+                <span>Nacho</span>
+            </div>
+            <div class="roles-row"><span>Dashboard</span><span class="check">✓</span><span class="check">✓</span></div>
+            <div class="roles-row"><span>Nuevo Corte</span><span class="check">✓</span><span class="check">✓</span></div>
+            <div class="roles-row"><span>Deudores</span><span class="check">✓</span><span class="partial">ver</span></div>
+            <div class="roles-row"><span>Bonos</span><span class="check">✓</span><span class="check">✓</span></div>
+            <div class="roles-row"><span>Comisiones</span><span class="check">✓</span><span class="partial">propias</span></div>
+            <div class="roles-row"><span>Solicitudes</span><span class="partial">aprueba</span><span class="partial">envía</span></div>
+            <div class="roles-row"><span>Cierre de Caja</span><span class="check">✓</span><span class="cross">✗</span></div>
+            <div class="roles-row"><span>Historial</span><span class="check">✓</span><span class="check">✓</span></div>
+            <div class="roles-row"><span>Configuración</span><span class="check">✓</span><span class="cross">✗</span></div>
+        </div>
+    </div>
+
+    <!-- CASOS DE USO -->
+    <div class="section" id="casos">
+        <div class="section-header">
+            <div class="section-icon">📖</div>
+            <div class="section-title">Casos de Uso</div>
+        </div>
+
+        <div class="caso">
+            <div class="caso-header">✂️ Caso 1 — Corte simple en efectivo</div>
+            <div class="caso-body">
+                <div class="codigo">
+                    <p>Peluquero: Franco</p>
+                    <p>Tipo: Solo Corte</p>
+                    <p>Pago: Efectivo — $9.000</p>
+                    <p>Cliente: Carlos López</p>
+                </div>
+                <p style="font-size:13px; color:var(--gray);">El corte queda en el historial y suma al total del día en caja.</p>
+            </div>
+        </div>
+
+        <div class="caso">
+            <div class="caso-header">💳 Caso 2 — Pago mixto</div>
+            <div class="caso-body">
+                <div class="codigo">
+                    <p>Peluquero: Nacho · Corte y Barba</p>
+                    <p>Efectivo: $6.000</p>
+                    <p>Transferencia: $6.000</p>
+                    <p>Total: $12.000</p>
+                </div>
+                <p style="font-size:13px; color:var(--gray);">Ambos montos se registran por separado para el cierre de caja.</p>
+            </div>
+        </div>
+
+        <div class="caso">
+            <div class="caso-header">🚨 Caso 3 — Cliente con deuda</div>
+            <div class="caso-body">
+                <div class="codigo">
+                    <p>Cliente: Roberto Silva</p>
+                    <p>Corte y Barba — $12.000</p>
+                    <p>Pagó hoy: $5.000 · Debe: $7.000</p>
+                </div>
+                <ul class="pasos">
+                    <li><div class="paso-num">1</div> Tildar "Registrar como deuda"</li>
+                    <li><div class="paso-num">2</div> Ingresar monto pagado: $5.000</li>
+                    <li><div class="paso-num">3</div> Registrar</li>
+                </ul>
+                <div class="resultado">✅ Roberto aparece en Deudores debiendo $7.000.</div>
+            </div>
+        </div>
+
+        <div class="caso">
+            <div class="caso-header">💵 Caso 4 — Cobrar deuda de un cliente</div>
+            <div class="caso-body">
+                <div class="codigo">
+                    <p>Roberto debe: $7.000</p>
+                    <p>Paga hoy: $7.000 (transferencia)</p>
+                </div>
+                <ul class="pasos">
+                    <li><div class="paso-num">1</div> Ir a <strong>Deudores</strong></li>
+                    <li><div class="paso-num">2</div> Buscar a Roberto</li>
+                    <li><div class="paso-num">3</div> Clic en "Pagar"</li>
+                    <li><div class="paso-num">4</div> Ingresar monto y método</li>
+                    <li><div class="paso-num">5</div> Confirmar</li>
+                </ul>
+                <div class="resultado">✅ Roberto desaparece de la lista de deudores.</div>
+            </div>
+        </div>
+
+        <div class="caso">
+            <div class="caso-header">🎟️ Caso 5 — Usar bono de cliente</div>
+            <div class="caso-body">
+                <div class="codigo">
+                    <p>Cliente: Ana Martínez</p>
+                    <p>Bono activo · 2 cortes restantes</p>
+                </div>
+                <ul class="pasos">
+                    <li><div class="paso-num">1</div> Ir a <strong>Bonos Mensuales</strong></li>
+                    <li><div class="paso-num">2</div> Buscar a Ana</li>
+                    <li><div class="paso-num">3</div> Clic en "Usar Corte"</li>
+                </ul>
+                <div class="resultado">✅ Le queda 1 corte en el bono.</div>
+            </div>
+        </div>
+
+        <div class="caso">
+            <div class="caso-header">📋 Caso 6 — Nacho solicita eliminar un corte</div>
+            <div class="caso-body">
+                <ul class="pasos">
+                    <li><div class="paso-num">1</div> Nacho → <strong>Solicitudes</strong> → Nueva solicitud</li>
+                    <li><div class="paso-num">2</div> Tipo: "Eliminar Corte" → Seleccionar → Enviar</li>
+                    <li><div class="paso-num">3</div> Franco recibe notificación en el sidebar</li>
+                    <li><div class="paso-num">4</div> Franco → <strong>Solicitudes</strong> → Aprobar o Rechazar</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="caso">
+            <div class="caso-header">💰 Caso 7 — Cierre de caja diario</div>
+            <div class="caso-body">
+                <div class="codigo">
+                    <p>Efectivo registrado: $35.000</p>
+                    <p>Efectivo físico contado: $34.500</p>
+                    <p>Diferencia: ⚠️ $500</p>
+                </div>
+                <ul class="pasos">
+                    <li><div class="paso-num">1</div> Ir a <strong>Cierre de Caja</strong></li>
+                    <li><div class="paso-num">2</div> Ver total registrado en efectivo</li>
+                    <li><div class="paso-num">3</div> Contar dinero físico e ingresar: $34.500</li>
+                    <li><div class="paso-num">4</div> Agregar nota si corresponde</li>
+                    <li><div class="paso-num">5</div> Confirmar Cierre</li>
+                </ul>
+                <div class="resultado">✅ El cierre queda guardado en el historial.</div>
+            </div>
+        </div>
+
+        <div class="caso">
+            <div class="caso-header">📦 Caso 8 — Venta de producto</div>
+            <div class="caso-body">
+                <div class="codigo">
+                    <p>Cliente compró: Cera mate</p>
+                    <p>Monto: $5.000</p>
+                </div>
+                <ul class="pasos">
+                    <li><div class="paso-num">1</div> Al registrar el corte, tildar "Agregar venta de producto"</li>
+                    <li><div class="paso-num">2</div> Escribir descripción: "Cera mate"</li>
+                    <li><div class="paso-num">3</div> Ingresar monto: $5.000</li>
+                    <li><div class="paso-num">4</div> Registrar normalmente</li>
+                </ul>
+                <div class="resultado">✅ La venta queda registrada por separado. Se ve en Cierre de Caja → Ventas del Mes.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FLUJO DIARIO -->
+    <div class="section" id="flujo">
+        <div class="section-header">
+            <div class="section-icon">📅</div>
+            <div class="section-title">Flujo Diario Recomendado</div>
+        </div>
+
+        <div class="flujo-card">
+            <div class="flujo-header morning">🌅 Inicio del día</div>
+            <div class="flujo-body">
+                <div class="flujo-item"><span class="flujo-dot">›</span> Revisar el Dashboard para ver el resumen del mes</div>
+                <div class="flujo-item"><span class="flujo-dot">›</span> Revisar Deudores pendientes</div>
+                <div class="flujo-item"><span class="flujo-dot">›</span> Revisar Solicitudes pendientes (Franco)</div>
+                <div class="flujo-item"><span class="flujo-dot">›</span> Registrar Apertura de Caja (Franco)</div>
+            </div>
+        </div>
+
+        <div class="flujo-card">
+            <div class="flujo-header day">✂️ Durante el día</div>
+            <div class="flujo-body">
+                <div class="flujo-item"><span class="flujo-dot">›</span> Registrar cada corte apenas se realiza</div>
+                <div class="flujo-item"><span class="flujo-dot">›</span> Si el cliente tiene bono → usar en Bonos Mensuales</div>
+                <div class="flujo-item"><span class="flujo-dot">›</span> Si el cliente queda debiendo → tildar "Registrar como deuda"</div>
+                <div class="flujo-item"><span class="flujo-dot">›</span> Si vende un producto → agregar en el formulario del corte</div>
+                <div class="flujo-item"><span class="flujo-dot">›</span> Si un cliente paga una deuda → registrar en Deudores</div>
+            </div>
+        </div>
+
+        <div class="flujo-card">
+            <div class="flujo-header night">🌙 Cierre del día (Franco)</div>
+            <div class="flujo-body">
+                <div class="flujo-item"><span class="flujo-dot">›</span> Ir a Cierre de Caja</div>
+                <div class="flujo-item"><span class="flujo-dot">›</span> Verificar efectivo registrado vs físico</div>
+                <div class="flujo-item"><span class="flujo-dot">›</span> Revisar ventas de productos del día</div>
+                <div class="flujo-item"><span class="flujo-dot">›</span> Agregar notas si hace falta</div>
+                <div class="flujo-item"><span class="flujo-dot">›</span> Confirmar Cierre ✅</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INSTALAR -->
+    <div class="section" id="instalar">
+        <div class="section-header">
+            <div class="section-icon">📱</div>
+            <div class="section-title">Instalar como App</div>
+        </div>
+
+        <div class="install-card">
+            <div class="install-header">🍎 iPhone (Safari)</div>
+            <ul class="install-steps">
+                <li><div class="install-num">1</div> Abrir la app en <strong>Safari</strong></li>
+                <li><div class="install-num">2</div> Tocar el botón compartir □↑ (abajo del todo)</li>
+                <li><div class="install-num">3</div> Tocar <strong>"Agregar a inicio"</strong></li>
+                <li><div class="install-num">4</div> Confirmar — ¡listo!</li>
+            </ul>
+        </div>
+
+        <div class="install-card">
+            <div class="install-header">🤖 Android (Chrome)</div>
+            <ul class="install-steps">
+                <li><div class="install-num">1</div> Abrir en <strong>Chrome</strong></li>
+                <li><div class="install-num">2</div> Menú ⋮ → <strong>"Agregar a pantalla principal"</strong></li>
+                <li><div class="install-num">3</div> Confirmar</li>
+            </ul>
+        </div>
+
+        <div class="install-card">
+            <div class="install-header">💻 PC (Chrome / Edge)</div>
+            <ul class="install-steps">
+                <li><div class="install-num">1</div> Buscar el ícono de instalación en la barra de direcciones</li>
+                <li><div class="install-num">2</div> Clic en <strong>"Instalar"</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- MEJORAS FUTURAS -->
+    <div class="section" id="mejoras">
+        <div class="section-header">
+            <div class="section-icon">🚀</div>
+            <div class="section-title">Mejoras Futuras Sugeridas</div>
+        </div>
+
+        <div class="card">
+            <div class="mejora-item">
+                <div class="mejora-icon">📄</div>
+                <div class="mejora-text"><strong>Exportar a PDF/Excel</strong><span>Reportes de historial y cierres de caja</span></div>
+            </div>
+            <div class="mejora-item">
+                <div class="mejora-icon">📊</div>
+                <div class="mejora-text"><strong>Estadísticas avanzadas</strong><span>Gráficos de ingresos por semana/mes</span></div>
+            </div>
+            <div class="mejora-item">
+                <div class="mejora-icon">📆</div>
+                <div class="mejora-text"><strong>Sistema de turnos</strong><span>Agenda con reservas de clientes</span></div>
+            </div>
+            <div class="mejora-item">
+                <div class="mejora-icon">💬</div>
+                <div class="mejora-text"><strong>Notificaciones WhatsApp</strong><span>Avisar cuando el bono está por vencer</span></div>
+            </div>
+            <div class="mejora-item">
+                <div class="mejora-icon">📦</div>
+                <div class="mejora-text"><strong>Control de inventario</strong><span>Productos y stock de la barbería</span></div>
+            </div>
+            <div class="mejora-item">
+                <div class="mejora-icon">⭐</div>
+                <div class="mejora-text"><strong>Sistema de puntos</strong><span>Fidelización de clientes frecuentes</span></div>
+            </div>
+            <div class="mejora-item">
+                <div class="mejora-icon">👥</div>
+                <div class="mejora-text"><strong>Más peluqueros</strong><span>Escalar el sistema a más empleados</span></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+    <div class="footer-logo">Barbería <span>Foliano's</span></div>
+    <p>Sistema de Administración v1.0</p>
+    <hr class="footer-divider">
+    <p class="zenta">Desarrollado por <strong>Zenta Solutions</strong><br>© 2026 · Uso exclusivo de Barbería Foliano's</p>
+</div>
+
+<script>
+    // Highlight active nav pill on scroll
+    const sections = document.querySelectorAll('.section');
+    const pills = document.querySelectorAll('.nav-pill');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                pills.forEach(p => p.classList.remove('active'));
+                const active = document.querySelector(`.nav-pill[href="#${entry.target.id}"]`);
+                if (active) {
+                    active.classList.add('active');
+                    active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
+            }
+        });
+    }, { threshold: 0.3 });
+
+    sections.forEach(s => observer.observe(s));
+
+    // Smooth scroll
+    document.querySelectorAll('.nav-pill').forEach(pill => {
+        pill.addEventListener('click', e => {
+            e.preventDefault();
+            const target = document.querySelector(pill.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+</script>
+
+</body>
+</html>

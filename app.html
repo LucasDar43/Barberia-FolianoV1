@@ -354,6 +354,43 @@
                                     </div>
                                 </div>
 
+                                <!-- Venta de Producto -->
+                                <div class="form-group" style="margin-top: 8px;">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="tieneVentaProducto" onchange="window.app.toggleVentaProducto()">
+                                        <span>Agregar venta de producto</span>
+                                    </label>
+                                </div>
+
+                                <div id="ventaProductoFields" class="venta-producto-box">
+                                    <p class="venta-producto-titulo">Venta de Producto</p>
+                                    <div class="form-group" style="margin-bottom: 12px;">
+                                        <label for="descripcionProducto">Descripción del producto *</label>
+                                        <input type="text" id="descripcionProducto" placeholder="Ej: Shampoo, Cera mate, Crema de peinar...">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label for="montoProducto">Monto del producto *</label>
+                                        <input type="number" id="montoProducto" placeholder="$0.00" min="0" step="0.01">
+                                    </div>
+                                    <p class="venta-producto-nota">⚠️ Este monto se registra por separado y no se suma a las comisiones del peluquero.</p>
+                                </div>
+
+                                <!-- Resumen total -->
+                                <div id="resumenTotal" class="resumen-total-box">
+                                    <div class="resumen-fila">
+                                        <span>Corte:</span>
+                                        <span id="resumenMonto">$0</span>
+                                    </div>
+                                    <div class="resumen-fila">
+                                        <span>Producto:</span>
+                                        <span id="resumenProducto">$0</span>
+                                    </div>
+                                    <div class="resumen-fila resumen-total-fila">
+                                        <span>Total cobrar al cliente:</span>
+                                        <span id="resumenTotalMonto">$0</span>
+                                    </div>
+                                </div>
+
                                 <button type="submit" class="btn-submit">
                                     <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M20 6L9 17l-5-5"/>
@@ -532,6 +569,10 @@
                                     <span class="cierre-label">Transferencias hoy:</span>
                                     <span class="cierre-value" id="cierreTransferenciaRegistrada">$0</span>
                                 </div>
+                                <div class="cierre-row" id="filaCierreVentas" style="display:none;">
+                                    <span class="cierre-label">Ventas de productos hoy:</span>
+                                    <span class="cierre-value" style="color:#7c3aed;" id="cierreVentasProducto">$0</span>
+                                </div>
                                 <div class="cierre-row">
                                     <span class="cierre-label">Retiros del dia:</span>
                                     <span class="cierre-value" style="color:#ef4444;" id="cierreRetirosHoy">$0</span>
@@ -592,6 +633,32 @@
                                 </button>
                             </div>
 
+                        </div>
+
+                        <!-- VENTAS DE PRODUCTOS DEL MES -->
+                        <div class="card" style="margin-bottom: 20px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                                <h3 class="card-title" style="margin:0;">Ventas de Productos — Mes Actual</h3>
+                                <span style="background:#7c3aed; color:white; padding:4px 12px; border-radius:20px; font-weight:700; font-size:14px;" id="totalVentasMes">$0</span>
+                            </div>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Producto</th>
+                                        <th>Cliente</th>
+                                        <th>Peluquero</th>
+                                        <th>Monto</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="ventasMesTable">
+                                    <tr>
+                                        <td colspan="5" class="empty-state">No hay ventas de productos este mes</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
 
                         <!-- HISTORIAL -->
@@ -1228,8 +1295,8 @@
         </div>
     </div>
 
-    <script type="module" src="js/app.js?v=1"></script>
-    <script type="module" src="js/extensiones.js"></script>
+    <script type="module" src="js/app.js?v=2"></script>
+    <script type="module" src="js/extensiones.js?v=2"></script>
 
 
     <script>

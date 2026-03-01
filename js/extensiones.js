@@ -34,6 +34,7 @@ function agregarFuncionesCierre() {
     app.renderCierre = async function() {
         await this.cargarMovimientosCaja();
         this.actualizarEstadoCaja();
+        this.renderVentasMes();
         this.renderHistorialCierres();
     };
 
@@ -84,6 +85,23 @@ function agregarFuncionesCierre() {
             transferenciaHoy += c.montoTransferencia || 0;
         });
 
+        // Ventas de productos de hoy
+        const ventasHoy = (this.ventas || []).filter(v => {
+            if (!v.fecha) return false;
+            const f = v.fecha.toDate ? v.fecha.toDate() : new Date(v.fecha);
+            return this.isSameDay(f, hoy);
+        });
+        let efectivoVentas = 0;
+        let transferenciaVentas = 0;
+        ventasHoy.forEach(v => {
+            efectivoVentas += v.montoEfectivo || 0;
+            transferenciaVentas += v.montoTransferencia || 0;
+        });
+        const totalVentasHoy = efectivoVentas + transferenciaVentas;
+
+        efectivoHoy += efectivoVentas;
+        transferenciaHoy += transferenciaVentas;
+
         // Calcular saldo inicial:
         // Si hay apertura hoy, usarla.
         // Si no, tomar el saldo del ultimo cierre.
@@ -111,6 +129,14 @@ function agregarFuncionesCierre() {
         setSafe('cierreRetirosHoy', totalRetirosHoy);
         setSafe('cierreTotalEsperado', totalEsperado);
         setSafe('modalCierreTotalEsperado', totalEsperado);
+
+        // Mostrar fila de ventas si hay
+        const filaVentas = document.getElementById('filaCierreVentas');
+        const elemVentas = document.getElementById('cierreVentasProducto');
+        if (filaVentas && elemVentas) {
+            elemVentas.textContent = this.formatCurrency(totalVentasHoy);
+            filaVentas.style.display = totalVentasHoy > 0 ? 'flex' : 'none';
+        }
 
         // Estado apertura
         const estadoEl = document.getElementById('estadoApertura');
@@ -328,6 +354,44 @@ function agregarFuncionesCierre() {
                     <td>${monto}</td>
                     <td>${detalle}</td>
                     <td>${m.registradoPor || '-'}</td>
+                </tr>
+            `;
+        }).join('');
+    };
+
+    app.renderVentasMes = function() {
+        const tbody = document.getElementById('ventasMesTable');
+        if (!tbody) return;
+
+        const hoy = new Date();
+        const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+
+        const ventasMes = (this.ventas || []).filter(v => {
+            const fecha = v.fecha.toDate ? v.fecha.toDate() : new Date(v.fecha);
+            return fecha >= inicioMes;
+        });
+
+        const totalEl = document.getElementById('totalVentasMes');
+
+        if (ventasMes.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No hay ventas de productos este mes</td></tr>';
+            if (totalEl) totalEl.textContent = this.formatCurrency(0);
+            return;
+        }
+
+        const total = ventasMes.reduce((sum, v) => sum + (v.monto || 0), 0);
+        if (totalEl) totalEl.textContent = this.formatCurrency(total);
+
+        tbody.innerHTML = ventasMes.map(v => {
+            const fecha = v.fecha.toDate ? v.fecha.toDate() : new Date(v.fecha);
+            const fechaStr = fecha.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            return `
+                <tr>
+                    <td>${fechaStr}</td>
+                    <td>${v.descripcion || '-'}</td>
+                    <td>${v.cliente || 'Sin nombre'}</td>
+                    <td>${v.peluquero || '-'}</td>
+                    <td><strong>${this.formatCurrency(v.monto)}</strong></td>
                 </tr>
             `;
         }).join('');
