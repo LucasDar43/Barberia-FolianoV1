@@ -143,6 +143,14 @@
             <div class="content">
                 <!-- Dashboard Page -->
                 <div class="page active" id="dashboard-page">
+
+                    <!-- SELECTOR DE MES -->
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+                        <label style="font-weight: 600; color: var(--dark); font-size: 0.95em;">Período:</label>
+                        <select id="filtroDashboardMes" class="filter-select" style="min-width: 180px;">
+                            <!-- Se llena dinámicamente con JS -->
+                        </select>
+                    </div>
                     <div class="stats-grid">
                         <div class="stat-card">
                             <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -192,7 +200,7 @@
 
                     <div class="dashboard-grid">
                         <div class="card">
-                            <h3 class="card-title">Rendimiento por Peluquero - Hoy</h3>
+                            <h3 class="card-title" id="tituloRendimientoPeluquero">Rendimiento por Peluquero - Hoy</h3>
                             <div class="peluquero-stats">
                                 <div class="peluquero-item">
                                     <div class="peluquero-header">
@@ -231,7 +239,7 @@
                         </div>
 
                         <div class="card">
-                            <h3 class="card-title">Métodos de Pago - Hoy</h3>
+                            <h3 class="card-title" id="tituloMetodosPago">Métodos de Pago - Hoy</h3>
                             <div class="payment-stats">
                                 <div class="payment-item">
                                     <span class="payment-label">

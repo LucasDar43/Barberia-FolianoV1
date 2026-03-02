@@ -432,62 +432,137 @@ class BarberiaSystem {
         }
 
 
-    // ==================== DASHBOARD ====================
+        // ==================== DASHBOARD ====================
 
-    updateDashboard() {
-        const hoy = new Date();
-        const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+        poblarSelectorMes() {
+            const select = document.getElementById('filtroDashboardMes');
+            if (!select) return;
 
-        let cortesHoy = [];
-        let cortesMes = [];
-
-        if (this.userRole === 'peluquero') {
-            const nombre = (this.userName || '').toLowerCase();
-
-            cortesHoy = this.cortes.filter(c => {
-                if (!c.fecha) return false;
+            // Obtener todos los meses únicos con datos en this.cortes
+            const mesesConDatos = new Set();
+            this.cortes.forEach(c => {
+                if (!c.fecha) return;
                 const fecha = c.fecha.toDate ? c.fecha.toDate() : new Date(c.fecha);
-                const peluquero = (c.peluquero || '').toLowerCase();
-                return this.isSameDay(fecha, hoy) && peluquero === nombre;
+                const key = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}`;
+                mesesConDatos.add(key);
             });
 
-            cortesMes = this.cortes.filter(c => {
-                if (!c.fecha) return false;
-                const fecha = c.fecha.toDate ? c.fecha.toDate() : new Date(c.fecha);
-                const peluquero = (c.peluquero || '').toLowerCase();
-                return fecha >= inicioMes && peluquero === nombre;
-            });
-        } else {
-            cortesHoy = this.cortes.filter(c => {
-                if (!c.fecha) return false;
-                const fecha = c.fecha.toDate ? c.fecha.toDate() : new Date(c.fecha);
-                return this.isSameDay(fecha, hoy);
-            });
+            const hoy = new Date();
+            const mesActualKey = `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, '0')}`;
 
-            cortesMes = this.cortes.filter(c => {
-                if (!c.fecha) return false;
-                const fecha = c.fecha.toDate ? c.fecha.toDate() : new Date(c.fecha);
-                return fecha >= inicioMes;
-            });
+            // Siempre incluir el mes actual aunque no tenga datos
+            mesesConDatos.add(mesActualKey);
+
+            // Ordenar de más reciente a más antiguo
+            const mesesOrdenados = Array.from(mesesConDatos).sort((a, b) => b.localeCompare(a));
+
+            const nombresMeses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                                  'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+            const valorActual = select.value || mesActualKey;
+
+            select.innerHTML = mesesOrdenados.map(key => {
+                const [anio, mes] = key.split('-');
+                const nombre = `${nombresMeses[parseInt(mes) - 1]} ${anio}`;
+                const selected = key === valorActual ? 'selected' : '';
+                return `<option value="${key}" ${selected}>${nombre}</option>`;
+            }).join('');
+
+            // Listener (solo agregar una vez)
+            if (!select._listenerAgregado) {
+                select.addEventListener('change', () => this.updateDashboard());
+                select._listenerAgregado = true;
+            }
         }
 
-        const totalHoy = cortesHoy.reduce((sum, c) => sum + (c.monto || 0), 0);
-        const totalMes = cortesMes.reduce((sum, c) => sum + (c.monto || 0), 0);
+        updateDashboard() {
+            const hoy = new Date();
 
-        const elemTotalHoy = document.getElementById('totalHoy');
-        const elemTotalMes = document.getElementById('totalMes');
-        const elemCortesHoy = document.getElementById('cortesHoy');
-        const elemCortesMes = document.getElementById('cortesMes');
+            // Determinar el mes seleccionado
+            const select = document.getElementById('filtroDashboardMes');
+            let anioSel = hoy.getFullYear();
+            let mesSel = hoy.getMonth(); // 0-indexed
 
-        if (elemTotalHoy) elemTotalHoy.textContent = this.formatCurrency(totalHoy);
-        if (elemTotalMes) elemTotalMes.textContent = this.formatCurrency(totalMes);
-        if (elemCortesHoy) elemCortesHoy.textContent = cortesHoy.length;
-        if (elemCortesMes) elemCortesMes.textContent = cortesMes.length;
+            if (select && select.value) {
+                const [a, m] = select.value.split('-');
+                anioSel = parseInt(a);
+                mesSel = parseInt(m) - 1;
+            }
 
-        this.updatePeluquerosHoy(cortesHoy);
-        this.updateMetodosPagoHoy(cortesHoy);
-        this.renderRecentCuts();
-    }
+            const esMesActual = (anioSel === hoy.getFullYear() && mesSel === hoy.getMonth());
+
+            const inicioMesSel = new Date(anioSel, mesSel, 1);
+            const finMesSel = new Date(anioSel, mesSel + 1, 0, 23, 59, 59, 999);
+
+            // Poblar el selector con los meses disponibles
+            this.poblarSelectorMes();
+
+            const nombresMeses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                                  'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+            const etiquetaMes = `${nombresMeses[mesSel]} ${anioSel}`;
+
+            // Actualizar títulos de cards
+            const tituloRendimiento = document.getElementById('tituloRendimientoPeluquero');
+            const tituloMetodos = document.getElementById('tituloMetodosPago');
+            if (tituloRendimiento) tituloRendimiento.textContent = `Rendimiento por Peluquero - ${esMesActual ? 'Hoy' : etiquetaMes}`;
+            if (tituloMetodos) tituloMetodos.textContent = `Métodos de Pago - ${esMesActual ? 'Hoy' : etiquetaMes}`;
+
+            // Filtrar cortes
+            let cortesHoy = [];
+            let cortesMes = [];
+
+            if (this.userRole === 'peluquero') {
+                const nombre = (this.userName || '').toLowerCase();
+
+                cortesHoy = esMesActual ? this.cortes.filter(c => {
+                    if (!c.fecha) return false;
+                    const fecha = c.fecha.toDate ? c.fecha.toDate() : new Date(c.fecha);
+                    return this.isSameDay(fecha, hoy) && (c.peluquero || '').toLowerCase() === nombre;
+                }) : [];
+
+                cortesMes = this.cortes.filter(c => {
+                    if (!c.fecha) return false;
+                    const fecha = c.fecha.toDate ? c.fecha.toDate() : new Date(c.fecha);
+                    return fecha >= inicioMesSel && fecha <= finMesSel && (c.peluquero || '').toLowerCase() === nombre;
+                });
+
+            } else {
+                cortesHoy = esMesActual ? this.cortes.filter(c => {
+                    if (!c.fecha) return false;
+                    const fecha = c.fecha.toDate ? c.fecha.toDate() : new Date(c.fecha);
+                    return this.isSameDay(fecha, hoy);
+                }) : [];
+
+                cortesMes = this.cortes.filter(c => {
+                    if (!c.fecha) return false;
+                    const fecha = c.fecha.toDate ? c.fecha.toDate() : new Date(c.fecha);
+                    return fecha >= inicioMesSel && fecha <= finMesSel;
+                });
+            }
+
+            const totalHoy = cortesHoy.reduce((sum, c) => sum + (c.monto || 0), 0);
+            const totalMes = cortesMes.reduce((sum, c) => sum + (c.monto || 0), 0);
+
+            const elemTotalHoy = document.getElementById('totalHoy');
+            const elemTotalMes = document.getElementById('totalMes');
+            const elemCortesHoy = document.getElementById('cortesHoy');
+            const elemCortesMes = document.getElementById('cortesMes');
+
+            if (elemTotalHoy) elemTotalHoy.textContent = esMesActual ? this.formatCurrency(totalHoy) : '-';
+            if (elemTotalMes) elemTotalMes.textContent = this.formatCurrency(totalMes);
+            if (elemCortesHoy) elemCortesHoy.textContent = esMesActual ? cortesHoy.length : '-';
+            if (elemCortesMes) elemCortesMes.textContent = cortesMes.length;
+
+            // Las cards de rendimiento y métodos de pago muestran:
+            // - Si es mes actual: datos de HOY
+            // - Si es mes anterior: datos del MES completo
+            const cortesParaCards = esMesActual ? cortesHoy : cortesMes;
+
+            this.updatePeluquerosHoy(cortesParaCards);
+            this.updateMetodosPagoHoy(cortesParaCards);
+            this.renderRecentCuts();
+        }
+
 
     updatePeluquerosHoy(cortesHoy) {
         const peluqueros = this.userRole === 'peluquero' ? ['nacho'] : ['franco', 'nacho'];
