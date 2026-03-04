@@ -1557,6 +1557,29 @@ body[data-role="peluquero"] [data-page="configuracion"] {
     margin-bottom: 0;
 }
 
+@media (display-mode: standalone) {
+    body {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .app {
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .main-content {
+        height: 100%;
+    }
+
+    .content {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: none;
+    }
+}
+
 /* ============================================
    FIN DE ESTILOS V1.0
    ============================================ */
