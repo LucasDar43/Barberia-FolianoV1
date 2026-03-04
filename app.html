@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#667eea">
     <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
     <meta name="description" content="Sistema de Administración para Barbería Foliano's">
@@ -305,6 +305,7 @@
                                         <option value="">Seleccione el tipo</option>
                                         <option value="solo-corte">Solo Corte</option>
                                         <option value="corte-barba">Corte y Barba</option>
+                                        <option value="corte-nino">Corte Niño</option>
                                     </select>
                                 </div>
 
@@ -733,6 +734,20 @@
                                     </div>
                                 </div>
 
+                                <div class="precio-card">
+                                    <div class="precio-card-header">
+                                        <svg class="precio-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M20 6L9 17l-5-5"/>
+                                        </svg>
+                                        <h4>Corte Niño</h4>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="precioCorteNino">Precio (ARS)</label>
+                                        <input type="number" id="precioCorteNino" placeholder="7000" min="0" step="100" required>
+                                    </div>
+                                </div>
+
+
                                 <div class="form-group" style="margin-top: 20px;">
                                     <label class="checkbox-label">
                                         <input type="checkbox" id="usarPreciosFijos">
@@ -761,6 +776,10 @@
                                 <div class="preview-item">
                                     <span class="preview-label">Corte y Barba:</span>
                                     <span class="preview-value" id="previewCorteBarba">$12,000</span>
+                                </div>
+                                <div class="preview-item">
+                                    <span class="preview-label">Corte Niño:</span>
+                                    <span class="preview-value" id="previewCorteNino">$7,000</span>
                                 </div>
                                 <div class="preview-item">
                                     <span class="preview-label">Modo:</span>
@@ -948,6 +967,7 @@
                         <select id="turnoServicio">
                             <option value="solo-corte">Solo Corte</option>
                             <option value="corte-barba">Corte y Barba</option>
+                            <option value="corte-nino">Corte Niño</option>
                         </select>
                     </div>
                     <div class="form-group">

@@ -62,6 +62,7 @@ class BarberiaSystem {
         this.config = {
             precioSoloCorte: 9000,
             precioCorteBarba: 12000,
+            precioCorteNino: 7000,
             usarPreciosFijos: false
         };
 
@@ -654,10 +655,12 @@ class BarberiaSystem {
             let precio = 0;
             
             if (tipoCorte === 'solo-corte') {
-                precio = this.config.precioSoloCorte;
-            } else if (tipoCorte === 'corte-barba') {
-                precio = this.config.precioCorteBarba;
-            }
+                            precio = this.config.precioSoloCorte;
+                        } else if (tipoCorte === 'corte-barba') {
+                            precio = this.config.precioCorteBarba;
+                        } else if (tipoCorte === 'corte-nino') {
+                            precio = this.config.precioCorteNino;
+                        }
             
             if (precio > 0) {
                 montoInput.value = precio;
@@ -1042,18 +1045,21 @@ class BarberiaSystem {
     // ==================== CONFIGURACION ====================
 
     cargarConfiguracionUI() {
-        document.getElementById('precioSoloCorte').value = this.config.precioSoloCorte;
-        document.getElementById('precioCorteBarba').value = this.config.precioCorteBarba;
-        document.getElementById('usarPreciosFijos').checked = this.config.usarPreciosFijos;
-        
-        document.getElementById('previewSoloCorte').textContent = this.formatCurrency(this.config.precioSoloCorte);
-        document.getElementById('previewCorteBarba').textContent = this.formatCurrency(this.config.precioCorteBarba);
-        document.getElementById('previewModo').textContent = this.config.usarPreciosFijos ? 'Automatico' : 'Manual';
-    }
+            document.getElementById('precioSoloCorte').value = this.config.precioSoloCorte;
+            document.getElementById('precioCorteBarba').value = this.config.precioCorteBarba;
+            document.getElementById('precioCorteNino').value = this.config.precioCorteNino || 7000;
+            document.getElementById('usarPreciosFijos').checked = this.config.usarPreciosFijos;
+
+            document.getElementById('previewSoloCorte').textContent = this.formatCurrency(this.config.precioSoloCorte);
+            document.getElementById('previewCorteBarba').textContent = this.formatCurrency(this.config.precioCorteBarba);
+            document.getElementById('previewCorteNino').textContent = this.formatCurrency(this.config.precioCorteNino || 7000);
+            document.getElementById('previewModo').textContent = this.config.usarPreciosFijos ? 'Automatico' : 'Manual';
+        }
 
     async guardarConfiguracion() {
         this.config.precioSoloCorte = parseFloat(document.getElementById('precioSoloCorte').value);
         this.config.precioCorteBarba = parseFloat(document.getElementById('precioCorteBarba').value);
+        this.config.precioCorteNino = parseFloat(document.getElementById('precioCorteNino').value);
         this.config.usarPreciosFijos = document.getElementById('usarPreciosFijos').checked;
 
         try {
@@ -1919,8 +1925,11 @@ class BarberiaSystem {
     }
 
     getNombreTipo(tipo) {
-        return tipo === 'solo-corte' ? 'Solo Corte' : 'Corte + Barba';
-    }
+            if (tipo === 'solo-corte') return 'Solo Corte';
+            if (tipo === 'corte-barba') return 'Corte + Barba';
+            if (tipo === 'corte-nino') return 'Corte Niño';
+            return tipo;
+        }
 
     getNombreMetodo(metodo) {
         if (metodo === 'efectivo') return 'Efectivo';
@@ -1968,18 +1977,22 @@ class BarberiaSystem {
     }
 
     calcularPrecio(tipoCorte) {
-        if (!this.config.usarPreciosFijos) return null;
+            if (!this.config.usarPreciosFijos) return null;
 
-        if (tipoCorte === 'corte-barba') {
-            return this.config.precioCorteBarba;
+            if (tipoCorte === 'corte-barba') {
+                return this.config.precioCorteBarba;
+            }
+
+            if (tipoCorte === 'solo-corte') {
+                return this.config.precioSoloCorte;
+            }
+
+            if (tipoCorte === 'corte-nino') {
+                return this.config.precioCorteNino;
+            }
+
+            return null;
         }
-
-        if (tipoCorte === 'solo-corte') {
-            return this.config.precioSoloCorte;
-        }
-
-        return null;
-    }
 
 
 }
