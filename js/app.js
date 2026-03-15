@@ -1086,12 +1086,12 @@ class BarberiaSystem {
         let fechaInicio;
 
         if (periodo === 'semana') {
-            fechaInicio = new Date(hoy);
-            fechaInicio.setDate(hoy.getDate() - 7);
+            if (periodo === 'semana') {
+                fechaInicio = this.getSemanaActualInicio(hoy);
         } else {
             fechaInicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
         }
-
+    }
         const cortesNacho = this.cortes.filter(c => {
             if (!c.fecha) return false;
             const fecha = c.fecha.toDate ? c.fecha.toDate() : new Date(c.fecha);
@@ -1118,8 +1118,8 @@ class BarberiaSystem {
                 comisionDeNacho: comisionFrancoDeNacho,
                 gananciaTotal: gananciaTotalFranco
             }
-        };
-    }
+        }
+};
 
     actualizarVistaComisiones(prefijo, datos) {
         const elemCortesNacho = document.getElementById(`cortesNacho${prefijo}`);
@@ -1145,15 +1145,16 @@ class BarberiaSystem {
 
         const semanas = [];
         const hoy = new Date();
+        const inicioSemanaActual = this.getSemanaActualInicio(hoy);
 
         for (let i = 0; i < 8; i++) {
-            const fin = new Date(hoy);
-            fin.setDate(hoy.getDate() - (i * 7));
-            fin.setHours(23, 59, 59, 999);
-
-            const inicio = new Date(fin);
-            inicio.setDate(fin.getDate() - 6);
+            const inicio = new Date(inicioSemanaActual);
+            inicio.setDate(inicioSemanaActual.getDate() - (i * 7));
             inicio.setHours(0, 0, 0, 0);
+
+            const fin = new Date(inicio);
+            fin.setDate(inicio.getDate() + 5); // Lunes + 5 = Sábado
+            fin.setHours(23, 59, 59, 999);
 
             const cortesNacho = this.cortes.filter(c => {
                 if (!c.fecha) return false;
@@ -1880,6 +1881,16 @@ class BarberiaSystem {
         return d1.getFullYear() === d2.getFullYear() &&
                d1.getMonth() === d2.getMonth() &&
                d1.getDate() === d2.getDate();
+    }
+
+    getSemanaActualInicio(referencia) {
+        // La semana va de lunes (1) a sábado (6)
+        const d = new Date(referencia);
+        d.setHours(0, 0, 0, 0);
+        const dia = d.getDay(); // 0=Dom, 1=Lun, ..., 6=Sab
+        const diasDesdelLunes = dia === 0 ? 6 : dia - 1; // Dom cae en semana anterior
+        d.setDate(d.getDate() - diasDesdelLunes);
+        return d;
     }
 
     formatCurrency(value) {
