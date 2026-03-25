@@ -35,7 +35,7 @@
 | 💰 **Cierre de Caja** | Comparación efectivo registrado vs físico con historial |
 | 📋 **Historial** | Registro completo con filtros por fecha y peluquero |
 | ⚙️ **Configuración** | Precios fijos y porcentajes de comisión |
-| 📱 **PWA** | Instalable, modo offline con Service Worker |
+| 📱 **PWA** | Instalable |
 
 ---
 
@@ -208,6 +208,6 @@ Sistema desarrollado y licenciado para uso exclusivo de **Barbería Foliano's**.
 
 <div align="center">
 
-**Desarrollado con ❤️ por Zenta Solutions**
+**Desarrollado por Zenta Solutions**
 
 </div>
