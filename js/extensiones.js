@@ -354,6 +354,12 @@ function agregarFuncionesCierre() {
                     <td>${monto}</td>
                     <td>${detalle}</td>
                     <td>${m.registradoPor || '-'}</td>
+                    <td>
+                                <button onclick="app.editarMovimientoCaja('${m.id}', '${m.tipo}', ${m.tipo === 'apertura' ? m.monto : m.tipo === 'retiro' ? m.monto : m.efectivoFisico})"
+                                    style="background:#4a5f80; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer; font-size:12px;">
+                                    ✏️ Editar
+                                </button>
+                    </td>
                 </tr>
             `;
         }).join('');
@@ -397,6 +403,49 @@ function agregarFuncionesCierre() {
         }).join('');
     };
 
+app.editarMovimientoCaja = function(id, tipo, montoActual) {
+    const nuevoMonto = prompt(
+        `Corregir ${tipo === 'apertura' ? 'apertura' : tipo === 'retiro' ? 'retiro' : 'efectivo físico del cierre'}\n\nMonto actual: $${montoActual.toLocaleString('es-AR')}\n\nNuevo monto:`,
+        montoActual
+    );
+
+    if (nuevoMonto === null) return;
+    const monto = parseFloat(nuevoMonto);
+    if (isNaN(monto) || monto < 0) {
+        this.showToast('Monto inválido', 'error');
+        return;
+    }
+
+    this.confirmarEdicionCaja(id, tipo, monto);
+};
+
+app.confirmarEdicionCaja = async function(id, tipo, nuevoMonto) {
+    const { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js");
+
+    try {
+        let campos = {};
+
+        if (tipo === 'apertura' || tipo === 'retiro') {
+            campos = { monto: nuevoMonto };
+        } else if (tipo === 'cierre') {
+            const movimiento = this.movimientosCaja.find(m => m.id === id);
+            const esperado = movimiento?.efectivoEsperado || 0;
+            campos = {
+                efectivoFisico: nuevoMonto,
+                diferencia: nuevoMonto - esperado
+            };
+        }
+
+        await updateDoc(doc(db, 'caja', id), campos);
+        this.showToast('Movimiento corregido', 'success');
+        await this.cargarMovimientosCaja();
+        this.actualizarEstadoCaja();
+        this.renderHistorialCierres();
+    } catch (e) {
+        console.error(e);
+        this.showToast('Error al editar', 'error');
+    }
+};
     console.log('Funcion renderCierre agregada a app');
 }
 
