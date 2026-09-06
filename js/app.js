@@ -518,7 +518,7 @@ class BarberiaSystem {
                 cortesHoy = esMesActual ? this.cortes.filter(c => {
                     if (!c.fecha) return false;
                     const fecha = c.fecha.toDate ? c.fecha.toDate() : new Date(c.fecha);
-                    return this.isSameDay(fecha, hoy) && (c.peluquero || '').toLowerCase() === nombre;
+                    return this.isSameBusinessDay(fecha, hoy) && (c.peluquero || '').toLowerCase() === nombre;
                 }) : [];
 
                 cortesMes = this.cortes.filter(c => {
@@ -531,7 +531,7 @@ class BarberiaSystem {
                 cortesHoy = esMesActual ? this.cortes.filter(c => {
                     if (!c.fecha) return false;
                     const fecha = c.fecha.toDate ? c.fecha.toDate() : new Date(c.fecha);
-                    return this.isSameDay(fecha, hoy);
+                    return this.isSameBusinessDay(fecha, hoy);
                 }) : [];
 
                 cortesMes = this.cortes.filter(c => {
@@ -1637,6 +1637,9 @@ class BarberiaSystem {
                         <button class="btn-usar-bono" onclick="app.usarBono('${bono.id}')">
                             Usar Corte
                         </button>
+                        <button class="btn-eliminar-turno" onclick="app.eliminarBono('${bono.id}')">
+                            Eliminar Bono
+                        </button>
                     </div>
                 </div>
             `;
@@ -1809,6 +1812,22 @@ class BarberiaSystem {
         }
     }
 
+    async eliminarBono(bonoId) {
+        const bono = this.bonos.find(b => b.id === bonoId);
+        if (!bono) return;
+
+        const confirmado = confirm(`¿Eliminar el bono de ${bono.cliente}? Esta acción no se puede deshacer.`);
+        if (!confirmado) return;
+
+        try {
+            await deleteDoc(doc(db, 'bonos', bonoId));
+            this.showToast('Bono eliminado', 'success');
+        } catch (error) {
+            console.error('Error al eliminar bono:', error);
+            this.showToast('Error al eliminar bono', 'error');
+        }
+    }
+
     calcularDiasRestantes(fechaVencimiento) {
         const hoy = new Date();
         hoy.setHours(0, 0, 0, 0);
@@ -1881,6 +1900,20 @@ class BarberiaSystem {
         return d1.getFullYear() === d2.getFullYear() &&
                d1.getMonth() === d2.getMonth() &&
                d1.getDate() === d2.getDate();
+    }
+
+    getBusinessDay(fecha) {
+        const d = fecha instanceof Date ? fecha : (fecha.toDate ? fecha.toDate() : new Date(fecha));
+        if (d.getHours() < 4) {
+            return new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1);
+        }
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    }
+
+    isSameBusinessDay(fecha1, fecha2) {
+        const bd1 = this.getBusinessDay(fecha1);
+        const bd2 = this.getBusinessDay(fecha2);
+        return bd1.getTime() === bd2.getTime();
     }
 
     getSemanaActualInicio(referencia) {
